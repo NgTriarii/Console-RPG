@@ -192,7 +192,7 @@ public class Game
         Console.SetCursorPosition(Width, 0);
         Console.WriteLine("----------Inventory----------");
         Console.SetCursorPosition(Width, 1);
-        Console.WriteLine($"Right Hand: {(_player.RightHand != null ? _player.RightHand.Name : ' ')} Left Hand: {(_player.LeftHand != null ? _player.LeftHand.Name : ' ')} ");
+        Console.WriteLine($"Right Hand: {(_player.RightHand != null ? _player.RightHand.Name : ' ')} | Left Hand: {(_player.LeftHand != null ? _player.LeftHand.Name : ' ')} ");
         Console.SetCursorPosition(Width, 2);
         Console.WriteLine($"Coins: {_player.Inventory.Coins} Gold: {_player.Inventory.Gold}");
         for (int i = 0; i < _player.Stats.Count; i++)
