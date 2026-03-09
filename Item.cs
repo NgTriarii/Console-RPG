@@ -27,6 +27,7 @@ public class Item
     public virtual void Unequip(Player player)
     {
     }
+
 }
 
 public class Gold : Item {

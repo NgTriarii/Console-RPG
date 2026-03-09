@@ -151,6 +151,17 @@ public class Game
         }
     }
 
+    private void TryDropItem()
+    {
+        Tile currentTile = _map[_player.X, _player.Y];
+
+        if (currentTile.ItemOnTile == null)
+        {
+            Item Dropped = _player.DropItem(CursorPos);
+            _map[_player.X, _player.Y].ItemOnTile = Dropped;
+        }
+    }
+
     public void DrawMap()
     {
 
@@ -331,7 +342,9 @@ public class Game
         { ConsoleKey.E, () => TryPickUp() },
         { ConsoleKey.I, () => MoveCursor() },
         { ConsoleKey.R, () => EquipItem() },
-        { ConsoleKey.T, () => UnequipItem() }
+        { ConsoleKey.T, () => UnequipItem() },
+        { ConsoleKey.G, () => TryDropItem() }
+
 
 
     };

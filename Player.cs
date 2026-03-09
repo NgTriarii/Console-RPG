@@ -36,4 +36,11 @@ public class Player
         Y = Y + dy;
 
     }
+
+    public Item DropItem(int cursor)
+    {
+        Item DroppedItem = Inventory.Items[cursor];
+        Inventory.Items.RemoveAt(cursor);
+        return DroppedItem;
+    }
 }
