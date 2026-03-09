@@ -1,0 +1,20 @@
+﻿using GameEngine;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace GameEngine;
+public class Inventory
+{
+    public int Limit => 10;
+
+    public int Count => Items.Count;
+
+    public int Gold { get; set; } = 0;
+
+    public int Coins { get; set; } = 0;
+
+    public List<Item> Items = new List<Item>();
+}
