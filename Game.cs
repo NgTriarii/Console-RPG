@@ -119,7 +119,7 @@ public class Game
         {
             for (int y = 1; y < PlayHeight + 1; y++)
             {
-                if (random.Next() % 12 == 0)
+                if (random.Next() % 20 == 0)
                 {
                     _map[x,y].ItemOnTile = GetRandomItem(random);
                 }
@@ -282,16 +282,23 @@ public class Game
 
     public void MoveCursor()
     {
-        if (CursorPos != _player.Inventory.Count - 1)
+        if (CursorPos == _player.Inventory.Count - 1 || CursorPos > _player.Inventory.Count)
         {
-            CursorPos++;
+            CursorPos = 0;
         }
-        else CursorPos = 0;
+        else CursorPos++;
     }
 
     public void EquipItem()
     {
-        _player.Inventory.Items[CursorPos].Equip(_player);
+        if (CursorPos <= _player.Inventory.Count && _player.Inventory.Count != 0)
+        {
+            _player.Inventory.Items[CursorPos].Equip(_player);
+            if (CursorPos == _player.Inventory.Count)
+            {
+                CursorPos = 0;
+            }
+        }
     }
 
     public void UnequipItem()
