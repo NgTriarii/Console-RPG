@@ -39,7 +39,7 @@ public class Renderer
 
     private void DrawInventory(Player player, int mapWidth, int mapHeight, int cursorPos)
     {
-        int invWidth = 35;
+        int invWidth = 10;
         string blankLine = new string(' ', invWidth);
 
         for (int i = 0; i < mapHeight; i++)
