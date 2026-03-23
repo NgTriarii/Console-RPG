@@ -1,200 +1,312 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="GameEngine.Game" Collapsed="true">
-    <Position X="27.75" Y="0.5" Width="1.5" />
+    <Position X="28" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAAAAAIAAAAAAAAAIAAACACAEAAAAAAAAEAgAAAEAgI=</HashCode>
+      <HashCode>AAAAEAAAIAAAAAAAAAAAAEAAAAAAQAAAAAAgAAAAIAI=</HashCode>
       <FileName>Game.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="GameEngine.GameDirector" Collapsed="true">
+    <Position X="29.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>GameDirector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameEngine.MoveCommand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="26.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGameCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="GameEngine.DropCommand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGameCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="GameEngine.PickUpCommand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="28" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGameCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="GameEngine.EquipCommand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="26.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGameCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="GameEngine.UnequipCommand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGameCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="GameEngine.InputChainBuilder" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAgAAAAQAAAAAAAAAAAAAABAAAAAAAAAEgAABABAAA=</HashCode>
+      <FileName>InputBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="GameEngine.InputFactory" Collapsed="true">
+    <Position X="26.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>InputFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameEngine.InputHandler">
+    <Position X="14.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAQAAAAAAAAAAAAAAAAAAAAAAgAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>InputHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameEngine.MoveHandler" Collapsed="true">
+    <Position X="16.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>InputHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameEngine.SimpleActionHandler" Collapsed="true">
+    <Position X="13" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAAEAACAAAAAAAAAAAIAAAAAgAAAAAA=</HashCode>
+      <FileName>InputHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Class Name="GameEngine.Inventory" Collapsed="true">
-    <Position X="29.5" Y="0.5" Width="1.5" />
+    <Position X="28" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAACAAAAAAACQQAAAAAAAAAAAAAAAAAAAE=</HashCode>
       <FileName>Inventory.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Item" Collapsed="true">
-    <Position X="17.25" Y="3.25" Width="1.5" />
+    <Position X="14" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAEAAAgAAAAAIAABAA=</HashCode>
       <FileName>Item.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Gold" Collapsed="true">
-    <Position X="14" Y="4.75" Width="1.5" />
+    <Position X="8.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAABAA=</HashCode>
       <FileName>Item.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Coin" Collapsed="true">
-    <Position X="16.25" Y="4.75" Width="1.5" />
+    <Position X="17.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAABAA=</HashCode>
       <FileName>Item.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Book" Collapsed="true">
-    <Position X="18.5" Y="4.75" Width="1.5" />
+    <Position X="19.75" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Item.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Chalice" Collapsed="true">
-    <Position X="9.5" Y="4.75" Width="1.5" />
+    <Position X="22" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Item.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Stick" Collapsed="true">
-    <Position X="11.75" Y="4.75" Width="1.5" />
+    <Position X="6.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Item.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Map" Collapsed="true">
-    <Position X="31.25" Y="0.5" Width="1.5" />
+    <Position X="29.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAABAAAAAAAAAAAAEAAAACAAAIAAAAAAAAAAAg=</HashCode>
       <FileName>Map.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.MapGenerator" Collapsed="true">
-    <Position X="27.75" Y="1.5" Width="1.5" />
+    <Position X="24.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAABCAAAAAAAEAAAAAQAAAAAAAAAAAAAE=</HashCode>
       <FileName>MapGenerator.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Player" Collapsed="true">
-    <Position X="29.5" Y="1.5" Width="1.5" />
+    <Position X="29.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABAQAAAAAIAAAAAAAAAAAACAAAAAAAAAACAAAgAAYAA=</HashCode>
       <FileName>Player.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Renderer" Collapsed="true">
-    <Position X="27.75" Y="2.5" Width="1.5" />
+    <Position X="26.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAABAQA=</HashCode>
+      <HashCode>AIAAAAAAAAAAAAIAAAAAAAAAAAAAAAAgAAAAAAABAQA=</HashCode>
       <FileName>Renderer.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="GameEngine.StandardMapBuilder" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="28" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAECgAAAAAAABAAAAAAIAAAAAAEIQAACQACE=</HashCode>
+      <FileName>StandardMapBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
   <Class Name="GameEngine.Stat" Collapsed="true">
-    <Position X="14.75" Y="0.5" Width="1.5" />
+    <Position X="11.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>Stat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Luck" Collapsed="true">
-    <Position X="11.5" Y="1.75" Width="1.5" />
+    <Position X="6" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Stat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Strength" Collapsed="true">
-    <Position X="13.75" Y="1.75" Width="1.5" />
+    <Position X="8.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Stat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Dexterity" Collapsed="true">
-    <Position X="16" Y="1.75" Width="1.5" />
+    <Position X="10.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Stat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Health" Collapsed="true">
-    <Position X="18.25" Y="1.75" Width="1.5" />
+    <Position X="12.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>Stat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Aggression" Collapsed="true">
-    <Position X="20.5" Y="1.75" Width="1.5" />
+    <Position X="15" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Stat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Wisdom" Collapsed="true">
-    <Position X="9.25" Y="1.75" Width="1.5" />
+    <Position X="17.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Stat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Tile" Collapsed="true">
-    <Position X="11.25" Y="6.5" Width="1.5" />
+    <Position X="8" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAEAAAAAAAAEgAAAAAgAAAAAEAAAAACAA=</HashCode>
       <FileName>Tile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Wall" Collapsed="true">
-    <Position X="9" Y="7.75" Width="1.5" />
+    <Position X="5.75" Y="8.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAACAA=</HashCode>
       <FileName>Tile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.HorizBorder" Collapsed="true">
-    <Position X="11.25" Y="7.75" Width="1.5" />
+    <Position X="8" Y="8.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAACAA=</HashCode>
       <FileName>Tile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.VertBorder" Collapsed="true">
-    <Position X="13.5" Y="7.75" Width="1.5" />
+    <Position X="10.25" Y="8.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAACAA=</HashCode>
       <FileName>Tile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Weapon" Collapsed="true">
-    <Position X="23" Y="4.75" Width="1.5" />
+    <Position X="13" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAACAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Weapon.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Rapier" Collapsed="true">
-    <Position X="20.75" Y="6.25" Width="1.5" />
+    <Position X="10.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAACAAAAgAAAAAAAAAAQAAAAAAAAgAAAAAIAAAAA=</HashCode>
       <FileName>Weapon.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Zweihander" Collapsed="true">
-    <Position X="23" Y="6.25" Width="1.5" />
+    <Position X="13" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAACAAAAgAAAAAAAAAAQAAAAEAAAgAAAAAIAAAAA=</HashCode>
       <FileName>Weapon.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameEngine.Shield" Collapsed="true">
-    <Position X="25.25" Y="6.25" Width="1.5" />
+    <Position X="15.25" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAACAAAAgAAAAAAAAAAQAAAAAAAAgAAAAAIAAAAA=</HashCode>
       <FileName>Weapon.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Program" Collapsed="true">
-    <Position X="31.25" Y="1.5" Width="1.5" />
+    <Position X="24.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
       <FileName>Program.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Interface Name="GameEngine.IGameCommand" Collapsed="true">
+    <Position X="24.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IGameCommand.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GameEngine.IMapBuilder" Collapsed="true">
+    <Position X="28" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAECgAAAAAAABAAAAAAIAAAAAAEIQAACAACA=</HashCode>
+      <FileName>IMapBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="GameEngine.IInputBuilder" Collapsed="true">
+    <Position X="26.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAQAAAAAAAAAAAAAABAAAAAAAAAEgAAAAAAAA=</HashCode>
+      <FileName>InputBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

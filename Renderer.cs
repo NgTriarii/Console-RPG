@@ -1,25 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace GameEngine;
 
 public class Renderer
 {
-    public void DrawFrame(Map map, Player player, int cursorPos)
+    public void DrawFrame(Map map, Player player, int cursorPos, string message, InputHandler inputChain)
     {
         Console.SetCursorPosition(0, 0);
         DrawMap(map, player);
         DrawInventory(player, map.Width, map.Height, cursorPos);
         DrawDescription(map, player, map.Height);
+        DrawMessageAndControls(map.Width, message, inputChain);
     }
 
     private void DrawMap(Map map, Player player)
     {
-        Console.SetCursorPosition(0, 0);
-        StringBuilder sb = new StringBuilder();
-
         for (int y = 0; y < map.Height; y++)
         {
+            Console.SetCursorPosition(0, y);
+            StringBuilder sb = new StringBuilder();
+
             for (int x = 0; x < map.Width; x++)
             {
                 if (player.X == x && player.Y == y)
@@ -31,61 +33,91 @@ public class Renderer
                     sb.Append(map.Tiles[x, y].Symbol);
                 }
             }
-            sb.AppendLine();
+            Console.Write(sb.ToString());
         }
-
-        Console.Write(sb.ToString());
     }
 
     private void DrawInventory(Player player, int mapWidth, int mapHeight, int cursorPos)
     {
+        int invWidth = 35;
+        string blankLine = new string(' ', invWidth);
+
         for (int i = 0; i < mapHeight; i++)
         {
             Console.SetCursorPosition(mapWidth, i + 1);
-            Console.WriteLine("                                                         ");
+            Console.Write(blankLine);
         }
 
         Console.SetCursorPosition(mapWidth, 0);
-        Console.WriteLine("----------Inventory----------");
+        Console.Write("----------Inventory----------");
         Console.SetCursorPosition(mapWidth, 1);
-        Console.WriteLine($"Right Hand: {(player.RightHand != null ? player.RightHand.Name : ' ')} | Left Hand: {(player.LeftHand != null ? player.LeftHand.Name : ' ')} ");
+        Console.Write($"Right Hand: {(player.RightHand != null ? player.RightHand.Name : ' ')} | Left Hand: {(player.LeftHand != null ? player.LeftHand.Name : ' ')} ");
         Console.SetCursorPosition(mapWidth, 2);
-        Console.WriteLine($"Coins: {player.Inventory.Coins} Gold: {player.Inventory.Gold}");
+        Console.Write($"Coins: {player.Inventory.Coins} Gold: {player.Inventory.Gold}");
 
         for (int i = 0; i < player.Stats.Count; i++)
         {
             Console.SetCursorPosition(mapWidth, i + 3);
-            Console.WriteLine($"{player.Stats[i].Name} - {player.Stats[i].Value}");
+            Console.Write($"{player.Stats[i].Name} - {player.Stats[i].Value}");
         }
 
         Console.SetCursorPosition(mapWidth, player.Stats.Count + 3);
-        Console.WriteLine("Items:");
+        Console.Write("Items:");
 
         for (int i = 0; i < player.Inventory.Count; i++)
         {
             Console.SetCursorPosition(mapWidth, i + 4 + player.Stats.Count);
-            Console.WriteLine($"-{player.Inventory.Items[i].Name} {(cursorPos == i ? '<' : ' ')}");
+            Console.Write($"-{player.Inventory.Items[i].Name} {(cursorPos == i ? '<' : ' ')}");
         }
-
-        Console.SetCursorPosition(mapWidth, mapHeight - 1);
-        Console.WriteLine("-----------------------------");
     }
 
     private void DrawDescription(Map map, Player player, int mapHeight)
     {
+        int safeWidth = Console.WindowWidth - 2;
+        if (safeWidth < 1) safeWidth = 50;
+
         Console.SetCursorPosition(0, mapHeight + 2);
-        Console.WriteLine("                                                                                                                ");
+        Console.Write(new string(' ', safeWidth));
 
         Console.SetCursorPosition(0, mapHeight + 1);
-        Console.WriteLine("Tile descrpition:");
+        Console.Write("Tile descrpition:");
 
+        Console.SetCursorPosition(0, mapHeight + 2);
         if (map.Tiles[player.X, player.Y].ItemOnTile != null)
         {
-            Console.WriteLine($"{map.Tiles[player.X, player.Y].ItemOnTile.Name} - {map.Tiles[player.X, player.Y].ItemOnTile.Description}");
+            Console.Write($"{map.Tiles[player.X, player.Y].ItemOnTile.Name} - {map.Tiles[player.X, player.Y].ItemOnTile.Description}");
         }
         else
         {
-            Console.WriteLine("An empty tile");
+            Console.Write("An empty tile");
+        }
+    }
+
+    private void DrawMessageAndControls(int mapWidth, string message, InputHandler inputChain)
+    {
+        int startX = mapWidth + 35;
+
+        if (startX >= Console.WindowWidth) return;
+
+        int maxSafeWidth = Console.WindowWidth - startX - 3;
+
+        if (maxSafeWidth <= 5) return;
+
+        Console.SetCursorPosition(startX, 0);
+        Console.Write(message.PadRight(maxSafeWidth).Substring(0, maxSafeWidth));
+
+        Console.SetCursorPosition(startX, 2);
+        Console.Write("Available Controls:".PadRight(maxSafeWidth).Substring(0, maxSafeWidth));
+
+        List<string> controls = new List<string>();
+        inputChain.CollectHelpText(controls);
+
+        int lineOffset = 0;
+        foreach (var ctrl in controls)
+        {
+            Console.SetCursorPosition(startX, 3 + lineOffset);
+            Console.Write(ctrl.PadRight(maxSafeWidth).Substring(0, maxSafeWidth));
+            lineOffset++;
         }
     }
 }
