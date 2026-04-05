@@ -10,7 +10,7 @@ Prerequisites
 
 Alternatively, Visual Studio 2022.
 
-###### Using the .NET CLI
+#### Using the .Net CLI
 
 Open your terminal or command prompt.
 
@@ -18,10 +18,11 @@ Navigate to the root directory of the project (where the OOD-Project.csproj file
 
 Run the following command:
 
+```
 dotnet run
+```
 
-
-##### Using Visual Studio
+#### Using Visual Studio
 
 Open the OOD-Project.sln file in Visual Studio 2022.
 
