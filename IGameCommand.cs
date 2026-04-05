@@ -126,7 +126,7 @@ public class EquipCommand : IGameCommand
 
             // Rely on the Item's virtual Equip method to handle the logic
             selectedItem.Equip(game.GamePlayer);
-            game.CurrentMessage = $"Equipped {selectedItem.Name}.";
+            game.CurrentMessage = ((selectedItem.IsEquippable) ? $"Equipped {selectedItem.Name}." : $"Couldn't equip {selectedItem.Name}.");
         }
     }
 }

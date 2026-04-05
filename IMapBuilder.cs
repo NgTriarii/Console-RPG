@@ -15,7 +15,7 @@ public interface IMapBuilder
     void AddPaths();
     void AddChambers();
     void AddCentralRoom(int roomWidth, int roomHeight);
-    void AddItems(int totalItems);
+    void AddLoot(int totalItems);
     void AddWeapons(int totalWeapons);
 
 

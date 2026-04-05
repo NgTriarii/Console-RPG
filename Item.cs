@@ -11,6 +11,8 @@ public class Item
     public virtual string Name => "Default Item";
     public virtual string Description => "A generic item.";
 
+    public virtual bool IsEquippable => false;
+
     public virtual void OnPickUp(Player player)
     {
         player.Inventory.Items.Add(this);

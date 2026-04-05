@@ -104,10 +104,10 @@ public class Renderer
         if (maxSafeWidth <= 5) return;
 
         Console.SetCursorPosition(startX, 0);
-        Console.Write(message.PadRight(maxSafeWidth).Substring(0, maxSafeWidth));
+        Console.Write(message.PadRight(maxSafeWidth/2));
 
         Console.SetCursorPosition(startX, 2);
-        Console.Write("Available Controls:".PadRight(maxSafeWidth).Substring(0, maxSafeWidth));
+        Console.Write("Available Controls:");
 
         List<string> controls = new List<string>();
         inputChain.CollectHelpText(controls);
@@ -116,8 +116,9 @@ public class Renderer
         foreach (var ctrl in controls)
         {
             Console.SetCursorPosition(startX, 3 + lineOffset);
-            Console.Write(ctrl.PadRight(maxSafeWidth).Substring(0, maxSafeWidth));
+            Console.Write(ctrl);
             lineOffset++;
         }
     }
 }
+

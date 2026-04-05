@@ -11,6 +11,8 @@ public class Weapon : Item
     public virtual int Damage { get; set; }
 
     public virtual bool IsTwoHanded { get; set; } = false;
+
+    public override bool IsEquippable { get; } = true;
 }
 public class Rapier : Weapon
 {

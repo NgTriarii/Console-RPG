@@ -1,15 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace GameEngine;
 
 public class StandardMapBuilder : IMapBuilder
 {
+    private readonly Func<Item>[] _itemLootTable = new Func<Item>[]
+    {
+        () => new Gold(),
+        () => new Coin(),
+        () => new Book(),
+        () => new Chalice(),
+        () => new Stick(),
+        () => new Rapier(),
+        () => new Zweihander(),
+        () => new Shield()
+    };
+
     private Map _map;
     private Random _random = new Random();
 
     public bool HasItemsAdded { get; private set; } = false;
     public bool HasWeaponsAdded { get; private set; } = false;
+
+    public void AddLoot(int lootnum)
+    {
+        Random random = new Random();
+
+        HasItemsAdded = true;
+        HasWeaponsAdded = true;
+
+        for (int x = 1; x < _map.PlayWidth + 1; x++)
+        {
+            for (int y = 1; y < _map.PlayHeight + 1; y++)
+            {
+                if (random.Next() % 20 == 0)
+                {
+                    _map.Tiles[x, y].ItemOnTile = GetRandomItem(random);
+                }
+            }
+        }
+
+    }
+
+    private Item GetRandomItem(Random random)
+    {
+        int roll = random.Next(_itemLootTable.Length);
+        return _itemLootTable[roll].Invoke();
+    }
 
     public void StartEmpty(int width, int height)
     {

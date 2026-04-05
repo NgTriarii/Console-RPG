@@ -24,9 +24,7 @@ public class GameDirector
         _mapBuilder.AddCentralRoom(10, 5);
         _mapBuilder.AddPaths();
         _mapBuilder.AddChambers();
-        _mapBuilder.AddItems(5);
-        _mapBuilder.AddWeapons(2);
-
+        _mapBuilder.AddLoot(12);
         _inputBuilder.StartBuilding();
         _inputBuilder.AddMovement();
 
