@@ -8,10 +8,18 @@ using System.Threading.Tasks;
 namespace GameEngine;
 public class Item
 {
-    public virtual string Name => "Default Item";
+    public virtual string Name { get; protected set; } = "Default Item";
     public virtual string Description => "A generic item.";
 
     public virtual bool IsEquippable => false;
+
+    public virtual int GetBaseDamage(Player player) => 0;
+    public virtual int GetLuckBonus() => 0;
+
+    public virtual CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null)
+    {
+        return attack.ExecuteWithOther(context ?? this, player);
+    }
 
     public virtual void OnPickUp(Player player)
     {
@@ -22,11 +30,11 @@ public class Item
     {
     }
 
-    public virtual void Equip(Player player)
+    public virtual void Equip(Player player, Item context = null)
     {
     }
 
-    public virtual void Unequip(Player player)
+    public virtual void Unequip(Player player, Item context = null)
     {
     }
 
@@ -68,4 +76,9 @@ public class Stick : Item
 {
     public override string Name => "Wooden Stick";
     public override string Description => "A sturdy wooden stick.";
+}
+
+public class BareHands : Item
+{
+    public override string Name => "Bare Hands";
 }

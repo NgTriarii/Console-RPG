@@ -54,6 +54,7 @@ public class InputChainBuilder : IInputBuilder
             if (g.GamePlayer.Inventory.Count > 0)
                 g.CursorPos = (g.CursorPos + 1) % g.GamePlayer.Inventory.Count;
         }, "Move Cursor"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.U, g => new ToggleAttackCommand().Execute(g), "Change Attack Type"));
     }
 
     public void AddEquipmentInteractions()

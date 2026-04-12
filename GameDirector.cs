@@ -22,9 +22,11 @@ public class GameDirector
     {
         _mapBuilder.StartFilled(width, height);
         _mapBuilder.AddCentralRoom(10, 5);
-        _mapBuilder.AddPaths();
         _mapBuilder.AddChambers();
+        _mapBuilder.AddPaths();
         _mapBuilder.AddLoot(12);
+        _mapBuilder.AddEnemies(4);
+        _mapBuilder.AddModifiedLoot(3);
         _inputBuilder.StartBuilding();
         _inputBuilder.AddMovement();
 

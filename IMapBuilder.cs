@@ -17,6 +17,8 @@ public interface IMapBuilder
     void AddCentralRoom(int roomWidth, int roomHeight);
     void AddLoot(int totalItems);
     void AddWeapons(int totalWeapons);
+    void AddEnemies(int totalEnemies);
+    void AddModifiedLoot(int totalItems);
 
 
     Map GetResult();

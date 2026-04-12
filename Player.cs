@@ -13,21 +13,17 @@ public class Player
 
     public Inventory Inventory { get; set; } = new Inventory();
 
-    public List<Stat> Stats = new List<Stat>();
-
     public Item? RightHand { get; set; }
 
     public Item? LeftHand { get; set; }
 
-    public Player()
-    {
-        Stats.Add(new Health());
-        Stats.Add(new Aggression());
-        Stats.Add(new Wisdom());
-        Stats.Add(new Luck());
-        Stats.Add(new Strength());
-        Stats.Add(new Dexterity());
-    }
+    // Stats
+    public Stat Health { get; private set; } = new Health();
+    public Stat Aggression { get; private set; } = new Aggression();
+    public Stat Wisdom { get; private set; } = new Wisdom();
+    public Stat Luck { get; private set; } = new Luck();
+    public Stat Strength { get; private set; } = new Strength();
+    public Stat Dexterity { get; private set; } = new Dexterity();
 
     public void Move(int dx, int dy, int mapWidth, int mapHeight)
     {
@@ -42,5 +38,33 @@ public class Player
         Item DroppedItem = Inventory.Items[cursor];
         Inventory.Items.RemoveAt(cursor);
         return DroppedItem;
+    }
+
+    public bool IsDead => Health.Value <= 0;
+
+    public void TakeDamage(int damage)
+    {
+        Health.Value -= damage;
+
+        if (Health.Value < 0)
+        {
+            Health.Value = 0;
+        }
+    }
+
+    private readonly IAttackAction[] _availableAttacks = new IAttackAction[]
+    {
+        new NormalAttack(),
+        new StealthAttack(),
+        new MagicalAttack()
+    };
+
+    private int _currentAttackIndex = 0;
+
+    public IAttackAction CurrentAttack => _availableAttacks[_currentAttackIndex];
+
+    public void ToggleAttackMode()
+    {
+        _currentAttackIndex = (_currentAttackIndex + 1) % _availableAttacks.Length;
     }
 }

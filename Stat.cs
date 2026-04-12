@@ -31,7 +31,10 @@ internal class Health : Stat
 {
     public override string Name => "Health";
 
-    public override int Value => 100;
+    public Health()
+    {
+        Value = 100;
+    }
 }
 
 internal class Aggression : Stat

@@ -15,6 +15,13 @@ public class Renderer
         DrawMessageAndControls(map.Width, message, inputChain);
     }
 
+    public void DrawGameOver()
+    {
+        Console.Clear();
+        Console.SetCursorPosition(0,0);
+        Console.Write("Game over...");
+    }
+
     private void DrawMap(Map map, Player player)
     {
         for (int y = 0; y < map.Height; y++)
@@ -39,7 +46,7 @@ public class Renderer
 
     private void DrawInventory(Player player, int mapWidth, int mapHeight, int cursorPos)
     {
-        int invWidth = 10;
+        int invWidth = 19;
         string blankLine = new string(' ', invWidth);
 
         for (int i = 0; i < mapHeight; i++)
@@ -55,18 +62,28 @@ public class Renderer
         Console.SetCursorPosition(mapWidth, 2);
         Console.Write($"Coins: {player.Inventory.Coins} Gold: {player.Inventory.Gold}");
 
-        for (int i = 0; i < player.Stats.Count; i++)
+        Stat[] statsToDraw = new Stat[]
+        {
+            player.Health,
+            player.Strength,
+            player.Dexterity,
+            player.Wisdom,
+            player.Luck,
+            player.Aggression
+        };
+
+        for (int i = 0; i < statsToDraw.Length; i++)
         {
             Console.SetCursorPosition(mapWidth, i + 3);
-            Console.Write($"{player.Stats[i].Name} - {player.Stats[i].Value}");
+            Console.Write($"{statsToDraw[i].Name} - {statsToDraw[i].Value}");
         }
 
-        Console.SetCursorPosition(mapWidth, player.Stats.Count + 3);
+        Console.SetCursorPosition(mapWidth, statsToDraw.Length + 3);
         Console.Write("Items:");
 
         for (int i = 0; i < player.Inventory.Count; i++)
         {
-            Console.SetCursorPosition(mapWidth, i + 4 + player.Stats.Count);
+            Console.SetCursorPosition(mapWidth, i + 4 + statsToDraw.Length);
             Console.Write($"-{player.Inventory.Items[i].Name} {(cursorPos == i ? '<' : ' ')}");
         }
     }
@@ -91,6 +108,9 @@ public class Renderer
         {
             Console.Write("An empty tile");
         }
+
+        Console.SetCursorPosition(0, mapHeight + 3);
+        Console.Write($"Attack Mode: {player.CurrentAttack.Name}");
     }
 
     private void DrawMessageAndControls(int mapWidth, string message, InputHandler inputChain)

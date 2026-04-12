@@ -22,15 +22,50 @@ public class MoveCommand : IGameCommand
         _dy = dy;
     }
 
+    public void ResolveCombat(Tile enemyTile, Player player, Game game)
+    {
+        Enemy enemy = enemyTile.EnemyOnTile;
+
+        IAttackAction chosenAttack = player.CurrentAttack;
+
+        Item equippedWeapon = player.RightHand ?? new BareHands();
+
+        CombatStats stats = equippedWeapon.AcceptAttack(chosenAttack, player);
+
+        enemy.TakeDamage(stats.Damage);
+
+        if (enemy.IsDead)
+        {
+            enemyTile.EnemyOnTile = null;
+            game.CurrentMessage = $"You defeated the {enemy.Name}!";
+            return;
+        }
+
+        int damageToPlayer = Math.Max(0, enemy.Attack - stats.Defense);
+
+        if (damageToPlayer > 0)
+        {
+            player.TakeDamage(damageToPlayer);
+        }
+
+    }
+
     public void Execute(Game game)
     {
         int nextX = game.GamePlayer.X + _dx;
         int nextY = game.GamePlayer.Y + _dy;
 
-        if (game.GameMap.Tiles[nextX, nextY].IsEnterable)
+        Tile targetTile = game.GameMap.Tiles[nextX, nextY];
+
+        if (targetTile.EnemyOnTile != null)
+        {
+            ResolveCombat(targetTile, game.GamePlayer, game);
+        }
+       
+        else if (targetTile.IsEnterable)
         {
             game.GamePlayer.Move(_dx, _dy, game.GameMap.Width, game.GameMap.Height);
-            game.GameMap.Tiles[game.GamePlayer.X, game.GamePlayer.Y].OnEntry(game.GamePlayer);
+            targetTile.OnEntry(game.GamePlayer);
         }
     }
 }
@@ -49,37 +84,13 @@ public class DropCommand : IGameCommand
                 return;
             }
 
-            game.CurrentMessage = "DROP ITEM: Press a number (0-9) to select slot, or Esc to cancel.";
-            game.GameRenderer.DrawFrame(game.GameMap, game.GamePlayer, game.CursorPos, game.CurrentMessage, game.InputChain);
+            Player player = game.GamePlayer;
 
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-            if (keyInfo.Key == ConsoleKey.Escape)
-            {
-                game.CurrentMessage = "Drop cancelled.";
-                return;
-            }
+            game.CurrentMessage = $"Dropped an item: {player.Inventory.Items[game.CursorPos].Name}";
+            game.GameMap.Tiles[player.X, player.Y].ItemOnTile = player.Inventory.Items[game.CursorPos];
+            player.DropItem(game.CursorPos);
 
-            if (char.IsDigit(keyInfo.KeyChar))
-            {
-                int index = int.Parse(keyInfo.KeyChar.ToString());
-                if (index < game.GamePlayer.Inventory.Count)
-                {
-                    Item dropped = game.GamePlayer.DropItem(index);
-                    currentTile.ItemOnTile = dropped;
-                    game.CurrentMessage = $"Dropped {dropped.Name}.";
 
-                    if (game.CursorPos >= game.GamePlayer.Inventory.Count)
-                        game.CursorPos = Math.Max(0, game.GamePlayer.Inventory.Count - 1);
-                }
-                else
-                {
-                    game.CurrentMessage = "Invalid slot number. Drop cancelled.";
-                }
-            }
-            else
-            {
-                game.CurrentMessage = "Invalid input. Drop cancelled.";
-            }
         }
         else
         {
@@ -88,6 +99,14 @@ public class DropCommand : IGameCommand
     }
 }
 
+public class ToggleAttackCommand : IGameCommand
+{
+    public void Execute(Game game)
+    {
+        game.GamePlayer.ToggleAttackMode();
+        game.CurrentMessage = $"Attack mode changed to: {game.GamePlayer.CurrentAttack.Name}";
+    }
+}
 public class PickUpCommand : IGameCommand
 {
     public void Execute(Game game)

@@ -11,6 +11,8 @@ public class Game
     public Renderer GameRenderer { get; private set; }
     public InputHandler InputChain { get; private set; }
 
+    public bool isGameOver { get; set; } = false;
+
     public Game()
     {
         GamePlayer = new Player();
@@ -30,116 +32,6 @@ public class Game
         GamePlayer.Y = GameMap.Height / 2;
     }
 
-    //public void TryMove(int dx, int dy)
-    //{
-    //    int nextX = _player.X + dx;
-    //    int nextY = _player.Y + dy;
-
-    //    if (_map.Tiles[nextX, nextY].IsEnterable)
-    //    {
-    //        _player.Move(dx, dy, _map.Width, _map.Height);
-    //        _map.Tiles[_player.X, _player.Y].OnEntry(_player);
-    //    }
-    //}
-
-    //public void TryPickUp()
-    //{
-    //    Tile currentTile = _map.Tiles[_player.X, _player.Y];
-
-    //    if (currentTile.ItemOnTile != null)
-    //    { 
-    //        currentTile.ItemOnTile.OnPickUp(_player);
-    //        currentTile.ItemOnTile = null;
-    //    }
-    //}
-
-    //public void TryDropItem()
-    //{
-    //    Tile currentTile = _map.Tiles[_player.X, _player.Y];
-
-    //    if (currentTile.ItemOnTile == null)
-    //    {
-    //        Item Dropped = _player.DropItem(CursorPos);
-    //        _map.Tiles[_player.X, _player.Y].ItemOnTile = Dropped;
-    //    }
-    //}
-    //public void MoveCursor()
-    //{
-    //    if (CursorPos == _player.Inventory.Count - 1 || CursorPos > _player.Inventory.Count)
-    //    {
-    //        CursorPos = 0;
-    //    }
-    //    else CursorPos++;
-    //}
-
-    //public void EquipItem()
-    //{
-    //    if (CursorPos <= _player.Inventory.Count && _player.Inventory.Count != 0)
-    //    {
-    //        _player.Inventory.Items[CursorPos].Equip(_player);
-    //        if (CursorPos == _player.Inventory.Count)
-    //        {
-    //            CursorPos = 0;
-    //        }
-    //    }
-    //}
-
-    //public void UnequipItem()
-    //{
-    //    if (_player.RightHand != null)
-    //    {
-    //        _player.RightHand.Unequip(_player);
-    //    }
-    //    if (_player.LeftHand != null)
-    //    {
-    //        _player.LeftHand.Unequip(_player);
-    //    }
-    //}
-    //public void Run()
-    //{
-    //    Console.CursorVisible = false;
-    //    Console.Clear();
-
-    //    Dictionary<ConsoleKey, Action> controls = new Dictionary<ConsoleKey, Action>
-    //{
-    //    { ConsoleKey.W, () => TryMove(0, -1) },
-    //    { ConsoleKey.UpArrow, () => TryMove(0, -1) },
-    //    { ConsoleKey.S, () => TryMove(0, 1) },
-    //    { ConsoleKey.DownArrow, () => TryMove(0, 1) },
-    //    { ConsoleKey.A, () => TryMove(-1, 0) },
-    //    { ConsoleKey.LeftArrow, () => TryMove(-1, 0) },
-    //    { ConsoleKey.D, () => TryMove(1, 0) },
-    //    { ConsoleKey.RightArrow, () => TryMove(1, 0) },
-
-    //    { ConsoleKey.E, () => TryPickUp() },
-    //    { ConsoleKey.I, () => MoveCursor() },
-    //    { ConsoleKey.R, () => EquipItem() },
-    //    { ConsoleKey.T, () => UnequipItem() },
-    //    { ConsoleKey.G, () => TryDropItem() }
-
-
-
-    //};
-
-    //    while (true)
-    //    {
-    //        _renderer.DrawFrame(_map, _player, CursorPos);
-
-    //        ConsoleKey key = Console.ReadKey(true).Key;
-
-    //        if (key == ConsoleKey.Escape) break;
-
-    //        if (controls.TryGetValue(key, out Action? action))
-    //        {
-    //            action.Invoke();
-    //        }
-    //    }
-
-    //    Console.Clear();
-    //    Console.WriteLine("Thanks for playing!");
-    //    Console.CursorVisible = true;
-    //}
-
     public void Run()
     {
         
@@ -156,7 +48,7 @@ public class Game
         Console.CursorVisible = false;
         Console.Clear();
 
-        while (true)
+        while (!GamePlayer.IsDead)
         {
             GameRenderer.DrawFrame(GameMap, GamePlayer, CursorPos, CurrentMessage, InputChain);
 
@@ -173,6 +65,16 @@ public class Game
                 CurrentMessage = "";
             }
         }
+
+        GameRenderer.DrawGameOver();
+
+        ConsoleKey currKey = Console.ReadKey(true).Key;
+
+        while (currKey != ConsoleKey.Enter)
+        {
+            currKey = Console.ReadKey(true).Key;
+        }
+
     }
 }
 

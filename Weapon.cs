@@ -14,29 +14,60 @@ public class Weapon : Item
 
     public override bool IsEquippable { get; } = true;
 }
-public class Rapier : Weapon
+
+public class HeavyWeapon : Weapon
+{
+    public override bool IsEquippable => true;
+    public override int GetBaseDamage(Player player) => player.Strength.Value + player.Aggression.Value;
+
+    public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null) =>
+        attack.ExecuteWithHeavy(context ?? this, player);
+}
+
+public class LightWeapon : Weapon
+{
+    public override bool IsEquippable => true;
+    public override int GetBaseDamage(Player player) => player.Dexterity.Value + player.Luck.Value;
+
+    public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null) =>
+        attack.ExecuteWithLight(context ?? this, player);
+}
+
+public class MagicalWeapon : Weapon
+{
+    public override bool IsEquippable => true;
+    public override int GetBaseDamage(Player player) => player.Wisdom.Value;
+
+    public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null) =>
+        attack.ExecuteWithMagical(context ?? this, player);
+}
+public class Rapier : LightWeapon
 {
     public override string Name => "Rapier";
 
     public override string Description => "A light and sharp one-handed rapier.";
 
     public override int Damage => 5;
-    public override void Equip(Player player)
+    public override void Equip(Player player, Item context = null)
     {
-        if(player.RightHand == null) {
-        player.Inventory.Items.Remove(this);
-        player.RightHand = this;
+        Item toEquip = context ?? this;
+
+        if (player.RightHand == null) {
+        player.Inventory.Items.Remove(toEquip);
+        player.RightHand = toEquip;
         }
     }
 
-    public override void Unequip(Player player)
+    public override void Unequip(Player player, Item context = null)
     {
-        player.Inventory.Items.Add(this);
+        Item toUnequip = context ?? this;
+
+        player.Inventory.Items.Add(toUnequip);
         player.RightHand = null;
     }
 }
 
-public class Zweihander : Weapon
+public class Zweihander : HeavyWeapon
 {
     public override string Name => "Zweihander";
 
@@ -45,19 +76,23 @@ public class Zweihander : Weapon
     public override int Damage => 15;
 
     public override bool IsTwoHanded => true;
-    public override void Equip(Player player)
+    public override void Equip(Player player, Item context = null)
     {
+        Item toEquip = context ?? this;
+
         if (player.RightHand == null && player.LeftHand == null)
         {
-            player.Inventory.Items.Remove(this);
-            player.RightHand = this;
-            player.LeftHand = this;
+            player.Inventory.Items.Remove(toEquip);
+            player.RightHand = toEquip;
+            player.LeftHand = toEquip;
         }
     }
 
-    public override void Unequip(Player player)
+    public override void Unequip(Player player, Item context = null)
     {
-        player.Inventory.Items.Add(this);
+        Item toUnequip = context ?? this;
+
+        player.Inventory.Items.Add(toUnequip);
         player.RightHand = null;
         player.LeftHand = null;
     }
@@ -70,18 +105,22 @@ public class Shield : Weapon
     public override string Description => "A round, metal shield with nordic ornamentation.";
 
     public override int Damage => 0;
-    public override void Equip(Player player)
+    public override void Equip(Player player, Item context = null)
     {
+        Item toEquip = context ?? this;
+
         if (player.LeftHand == null)
         {
-            player.Inventory.Items.Remove(this);
-            player.LeftHand = this;
+            player.Inventory.Items.Remove(toEquip);
+            player.LeftHand = toEquip;
         }
     }
 
-    public override void Unequip(Player player)
+    public override void Unequip(Player player, Item context = null)
     {
-        player.Inventory.Items.Add(this);
+        Item toUnequip = context ?? this;
+
+        player.Inventory.Items.Add(toUnequip);
         player.LeftHand = null;
     }
 }
