@@ -18,7 +18,7 @@ public class Weapon : Item
 public class HeavyWeapon : Weapon
 {
     public override bool IsEquippable => true;
-    public override int GetBaseDamage(Player player) => player.Strength.Value + player.Aggression.Value;
+    public override int GetBaseDamage(Player player) => Damage;
 
     public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null) =>
         attack.ExecuteWithHeavy(context ?? this, player);
@@ -27,7 +27,7 @@ public class HeavyWeapon : Weapon
 public class LightWeapon : Weapon
 {
     public override bool IsEquippable => true;
-    public override int GetBaseDamage(Player player) => player.Dexterity.Value + player.Luck.Value;
+    public override int GetBaseDamage(Player player) => Damage;
 
     public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null) =>
         attack.ExecuteWithLight(context ?? this, player);
@@ -36,7 +36,7 @@ public class LightWeapon : Weapon
 public class MagicalWeapon : Weapon
 {
     public override bool IsEquippable => true;
-    public override int GetBaseDamage(Player player) => player.Wisdom.Value;
+    public override int GetBaseDamage(Player player) => Damage;
 
     public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null) =>
         attack.ExecuteWithMagical(context ?? this, player);
