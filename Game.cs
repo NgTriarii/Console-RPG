@@ -60,10 +60,10 @@ public class Game
             {
                 CurrentMessage = $"[{key}] is not a valid action. Check available controls.";
             }
-            else if (!CurrentMessage.Contains("DROP ITEM") && !CurrentMessage.Contains("Equipped") && !CurrentMessage.Contains("Dropped") && !CurrentMessage.Contains("Picked"))
-            {
-                CurrentMessage = "";
-            }
+            //else if (!CurrentMessage.Contains("DROP ITEM") && !CurrentMessage.Contains("Equipped") && !CurrentMessage.Contains("Dropped") && !CurrentMessage.Contains("Picked"))
+            //{
+            //    CurrentMessage = "";
+            //}
         }
 
         GameRenderer.DrawGameOver();

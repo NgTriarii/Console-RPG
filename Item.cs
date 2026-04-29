@@ -13,9 +13,6 @@ public class Item
 
     public virtual bool IsEquippable => false;
 
-    public virtual int GetBaseDamage(Player player) => 0;
-    public virtual int GetLuckBonus() => 0;
-
     public virtual CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null)
     {
         return attack.ExecuteWithOther(context ?? this, player);
@@ -30,8 +27,9 @@ public class Item
     {
     }
 
-    public virtual void Equip(Player player, Item context = null)
+    public virtual int Equip(Player player, Item context = null)
     {
+        return 0;
     }
 
     public virtual void Unequip(Player player, Item context = null)

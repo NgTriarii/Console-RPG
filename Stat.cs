@@ -46,3 +46,12 @@ internal class Wisdom : Stat
 {
     public override string Name => "Wisdom";
 }
+
+internal class Damage : Stat
+{
+    public override string Name => "Damage";
+
+    private int _value;
+
+    public override int Value { get { return (_value > 0) ? _value : 0; } set {_value = value; } }
+}

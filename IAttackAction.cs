@@ -24,20 +24,20 @@ public class NormalAttack : IAttackAction
     public string Name => "Normal Attack";
     public CombatStats ExecuteWithHeavy(Item context, Player player) => new CombatStats
     {
-        Damage = context.GetBaseDamage(player),
-        Defense = player.Strength.Value + player.Luck.Value + context.GetLuckBonus()
+        Damage = player.Damage.Value,
+        Defense = player.Strength.Value + player.Luck.Value
     };
 
     public CombatStats ExecuteWithLight(Item context, Player player) => new CombatStats
     {
-        Damage = context.GetBaseDamage(player),
-        Defense = player.Dexterity.Value + player.Luck.Value + context.GetLuckBonus()
+        Damage = player.Damage.Value,
+        Defense = player.Dexterity.Value + player.Luck.Value
     };
 
     public CombatStats ExecuteWithMagical(Item context, Player player) => new CombatStats
     {
         Damage = 1,
-        Defense = player.Dexterity.Value + player.Luck.Value + context.GetLuckBonus()
+        Defense = player.Dexterity.Value + player.Luck.Value
     };
 
     public CombatStats ExecuteWithOther(Item context, Player player) => new CombatStats
@@ -52,13 +52,13 @@ public class StealthAttack : IAttackAction
     public string Name => "Stealth Attack";
     public CombatStats ExecuteWithHeavy(Item context, Player player) => new CombatStats
     {
-        Damage = context.GetBaseDamage(player) / 2, // Halved
+        Damage = player.Damage.Value / 2, // Halved
         Defense = player.Strength.Value
     };
 
     public CombatStats ExecuteWithLight(Item context, Player player) => new CombatStats
     {
-        Damage = context.GetBaseDamage(player) * 2, // Doubled
+        Damage = player.Damage.Value * 2, // Doubled
         Defense = player.Dexterity.Value
     };
 
@@ -81,24 +81,24 @@ public class MagicalAttack : IAttackAction
     public CombatStats ExecuteWithHeavy(Item context, Player player) => new CombatStats
     {
         Damage = 1,
-        Defense = player.Luck.Value + context.GetLuckBonus()
+        Defense = player.Luck.Value
     };
 
     public CombatStats ExecuteWithLight(Item context, Player player) => new CombatStats
     {
         Damage = 1,
-        Defense = player.Luck.Value + context.GetLuckBonus()
+        Defense = player.Luck.Value
     };
 
     public CombatStats ExecuteWithMagical(Item context, Player player) => new CombatStats
     {
-        Damage = context.GetBaseDamage(player),
+        Damage = player.Damage.Value,
         Defense = player.Wisdom.Value * 2
     };
 
     public CombatStats ExecuteWithOther(Item context, Player player) => new CombatStats
     {
         Damage = 0,
-        Defense = player.Luck.Value + context.GetLuckBonus()
+        Defense = player.Luck.Value
     };
 }

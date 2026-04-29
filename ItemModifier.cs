@@ -16,17 +16,14 @@ public abstract class ItemModifier : Item
     }
     public override bool IsEquippable => _innerItem.IsEquippable;
 
-    public override int GetBaseDamage(Player player) => _innerItem.GetBaseDamage(player);
-    public override int GetLuckBonus() => _innerItem.GetLuckBonus();
-
     public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null)
     {
         return _innerItem.AcceptAttack(attack, player, context ?? this);
     }
 
-    public override void Equip(Player player, Item context = null)
+    public override int Equip(Player player, Item context = null)
     {
-        _innerItem.Equip(player, context ?? this);
+        return _innerItem.Equip(player, context ?? this);
     }
 
     public override void Unequip(Player player, Item context = null)
@@ -36,12 +33,31 @@ public abstract class ItemModifier : Item
 
 }
 
+// TODO: Modify player stats on equip instead of changing the calculations. (i. e. implement equip and unequip in every modifier class instead of get*)
+
 public class StrongModifier : ItemModifier
 {
     public StrongModifier(Item innerItem) : base(innerItem) { }
 
     public override string Name => $"{_innerItem.Name} (Strong)";
-    public override int GetBaseDamage(Player player) => base.GetBaseDamage(player) + 5;
+    public override int Equip(Player player, Item context = null)
+    {
+
+        if (base.Equip(player, context) == 1)
+        {
+            player.Damage.Value += 5;
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public override void Unequip(Player player, Item context = null)
+    {
+        base.Unequip(player, context);
+
+        player.Damage.Value -= 5;
+    }
 }
 
 public class UnluckyModifier : ItemModifier
@@ -49,5 +65,23 @@ public class UnluckyModifier : ItemModifier
     public UnluckyModifier(Item innerItem) : base(innerItem) { }
 
     public override string Name => $"{_innerItem.Name} (Unlucky)";
-    public override int GetLuckBonus() => base.GetLuckBonus() - 5;
+
+    public override int Equip(Player player, Item context = null)
+    {
+
+        if (base.Equip(player, context) == 1)
+        {
+            player.Luck.Value -= 5;
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public override void Unequip(Player player, Item context = null)
+    {
+        base.Unequip(player, context);
+
+        player.Luck.Value += 5;
+    }
 }

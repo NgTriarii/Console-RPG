@@ -19,6 +19,7 @@ public class Player
 
     // Stats
     public Stat Health { get; private set; } = new Health();
+    public Stat Damage { get ; set; } = new Damage();
     public Stat Aggression { get; private set; } = new Aggression();
     public Stat Wisdom { get; private set; } = new Wisdom();
     public Stat Luck { get; private set; } = new Luck();
