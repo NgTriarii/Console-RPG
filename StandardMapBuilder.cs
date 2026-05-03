@@ -1,33 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace GameEngine;
 
 public class StandardMapBuilder : IMapBuilder
 {
-    private readonly Func<Item>[] _itemLootTable = new Func<Item>[]
-    {
-        () => new Gold(),
-        () => new Coin(),
-        () => new Book(),
-        () => new Chalice(),
-        () => new Stick(),
-        () => new Rapier(),
-        () => new Zweihander(),
-        () => new Shield()
-    };
+    //private readonly Func<Item>[] _itemLootTable = new Func<Item>[]
+    //{
+    //    () => new Gold(),
+    //    () => new Coin(),
+    //    () => new Book(),
+    //    () => new Chalice(),
+    //    () => new Stick(),
+    //    () => new Rapier(),
+    //    () => new Zweihander(),
+    //    () => new Shield()
+    //};
 
-    private readonly Func<Item>[] _weaponLootTable = new Func<Item>[]
-    {
-        () => new Rapier(),
-        () => new Zweihander(),
-        () => new Shield()
-    };
+    //private readonly Func<Item>[] _weaponLootTable = new Func<Item>[]
+    //{
+    //    () => new Rapier(),
+    //    () => new Zweihander(),
+    //    () => new Shield()
+    //};
 
-    private readonly Func<Enemy>[] _enemyTable = new Func<Enemy>[]
-    {
-        () => new Goblin()
-    };
+    //private readonly Func<Enemy>[] _enemyTable = new Func<Enemy>[]
+    //{
+    //    () => new Goblin(),
+    //    () => new SafeboxMimic(),
+    //    () => new BriefcaseBrawler()
+    //};
 
     private readonly Func<Item, Item>[] _modifierTable = new Func<Item, Item>[]
     {
@@ -38,35 +41,32 @@ public class StandardMapBuilder : IMapBuilder
     private Map _map;
     private Random _random = new Random();
     private BSPLeaf _rootLeaf;
+    private List<BSPLeaf> _leaves = new List<BSPLeaf>();
 
     public bool HasItemsAdded { get; private set; } = false;
     public bool HasWeaponsAdded { get; private set; } = false;
 
-    public void AddLoot(int lootnum)
+    public void AddLoot(int totalItems, IDungeonTheme theme)
     {
-        Random random = new Random();
-        HasItemsAdded = true;
-        HasWeaponsAdded = true;
-
-        for (int x = 1; x < _map.PlayWidth + 1; x++)
+        int placed = 0, attempts = 0;
+        while (placed < totalItems && attempts < totalItems * 100)
         {
-            for (int y = 1; y < _map.PlayHeight + 1; y++)
+            attempts++;
+            int x = _random.Next(1, _map.Width - 1);
+            int y = _random.Next(1, _map.Height - 1);
+
+            if (_map.Tiles[x, y] != null && _map.Tiles[x, y].IsEnterable && _map.Tiles[x, y].ItemOnTile == null)
             {
-                if (random.Next() % 20 == 0)
-                {
-                    _map.Tiles[x, y].ItemOnTile = GetRandomItem(random);
-                }
+                _map.Tiles[x, y].ItemOnTile = theme.GetRandomItem(_random);
+                placed++;
             }
         }
     }
 
-    public void AddEnemies(int totalEnemies)
+    public void AddEnemies(int totalEnemies, IDungeonTheme theme)
     {
-        int placed = 0;
-        int attempts = 0;
-        int maxAttempts = totalEnemies * 100;
-
-        while (placed < totalEnemies && attempts < maxAttempts)
+        int placed = 0, attempts = 0;
+        while (placed < totalEnemies && attempts < totalEnemies * 100)
         {
             attempts++;
             int x = _random.Next(1, _map.Width - 1);
@@ -74,14 +74,36 @@ public class StandardMapBuilder : IMapBuilder
 
             if (_map.Tiles[x, y] != null && _map.Tiles[x, y].IsEnterable)
             {
-                int roll = _random.Next(_enemyTable.Length);
-                _map.Tiles[x, y].EnemyOnTile = _enemyTable[roll].Invoke();
+                _map.Tiles[x, y].EnemyOnTile = theme.GetRandomEnemy(_random);
                 placed++;
             }
         }
     }
 
-    public void AddModifiedLoot(int totalItems)
+    public void AddWeapons(int totalItems, IDungeonTheme theme)
+    {
+        HasItemsAdded = true;
+        HasWeaponsAdded = true;
+
+        int placed = 0;
+        int attempts = 0;
+        int maxAttempts = totalItems * 100;
+
+        while (placed < totalItems && attempts < maxAttempts)
+        {
+            attempts++;
+            int x = _random.Next(1, _map.Width - 1);
+            int y = _random.Next(1, _map.Height - 1);
+
+            if (_map.Tiles[x, y] != null && _map.Tiles[x, y].IsEnterable && _map.Tiles[x, y].ItemOnTile == null)
+            {
+                _map.Tiles[x, y].ItemOnTile = theme.GetRandomWeapon(_random);
+                placed++;
+            }
+        }
+    }
+
+    public void AddModifiedWeapons(int totalItems, IDungeonTheme theme)
     {
         HasItemsAdded = true;
         HasWeaponsAdded = true;
@@ -99,7 +121,7 @@ public class StandardMapBuilder : IMapBuilder
             if (_map.Tiles[x, y] != null && _map.Tiles[x, y].IsEnterable && _map.Tiles[x, y].ItemOnTile == null)
             {
                 
-                Item item = GetRandomWeapon(_random);
+                Item item = theme.GetRandomWeapon(_random);
 
                 int modCount = _random.Next(1, 3);
                 for (int i = 0; i < modCount; i++)
@@ -114,20 +136,41 @@ public class StandardMapBuilder : IMapBuilder
         }
     }
 
-    private Item GetRandomItem(Random random)
+    public void PlaceSpecificItem(Item item)
     {
-        int roll = random.Next(_itemLootTable.Length);
-        return _itemLootTable[roll].Invoke();
+        int attempts = 0;
+        while (attempts < 1000)
+        {
+            attempts++;
+            int x = _random.Next(1, _map.Width - 1);
+            int y = _random.Next(1, _map.Height - 1);
+
+            if (_map.Tiles[x, y] != null && _map.Tiles[x, y].IsEnterable && _map.Tiles[x, y].ItemOnTile == null)
+            {
+                _map.Tiles[x, y].ItemOnTile = item;
+                HasItemsAdded = true;
+                return;
+            }
+        }
     }
 
-    private Item GetRandomWeapon(Random random)
-    {
-        int roll = random.Next(_weaponLootTable.Length);
-        return _weaponLootTable[roll].Invoke();
-    }
+    //private Item GetRandomItem(Random random)
+    //{
+    //    int roll = random.Next(_itemLootTable.Length);
+    //    return _itemLootTable[roll].Invoke();
+    //}
+
+    //private Item GetRandomWeapon(Random random)
+    //{
+    //    int roll = random.Next(_weaponLootTable.Length);
+    //    return _weaponLootTable[roll].Invoke();
+    //}
 
     public void StartEmpty(int width, int height)
     {
+        _leaves.Clear();
+        _rootLeaf = null;
+
         _map = new Map(width, height);
         for (int x = 0; x < _map.Width; x++)
         {
@@ -142,6 +185,9 @@ public class StandardMapBuilder : IMapBuilder
 
     public void StartFilled(int width, int height)
     {
+        _leaves.Clear();
+        _rootLeaf = null;
+
         _map = new Map(width, height);
         for (int x = 0; x < _map.Width; x++)
         {
@@ -159,21 +205,87 @@ public class StandardMapBuilder : IMapBuilder
         int startX = (_map.Width / 2) - (roomWidth / 2);
         int startY = (_map.Height / 2) - (roomHeight / 2);
 
-        for (int x = startX; x < startX + roomWidth; x++)
+        if (_rootLeaf == null)
         {
-            for (int y = startY; y < startY + roomHeight; y++)
+            // CALLED BEFORE ADDCHAMBERS: Manually build the BSP tree around the center
+            _rootLeaf = new BSPLeaf(1, 1, _map.Width - 2, _map.Height - 2);
+
+            // Split 1: Isolate the Top region
+            _rootLeaf.LeftChild = new BSPLeaf(1, 1, _map.Width - 2, startY - 1);
+            _rootLeaf.RightChild = new BSPLeaf(1, startY, _map.Width - 2, _map.Height - 1 - startY);
+
+            var midBottom = _rootLeaf.RightChild;
+
+            // Split 2: Isolate the Bottom region
+            midBottom.LeftChild = new BSPLeaf(1, startY, _map.Width - 2, roomHeight); // Middle row
+            midBottom.RightChild = new BSPLeaf(1, startY + roomHeight, _map.Width - 2, _map.Height - 1 - (startY + roomHeight));
+
+            var midStrip = midBottom.LeftChild;
+
+            // Split 3: Isolate the Left region
+            midStrip.LeftChild = new BSPLeaf(1, startY, startX - 1, roomHeight);
+            midStrip.RightChild = new BSPLeaf(startX, startY, _map.Width - 1 - startX, roomHeight);
+
+            var centerRight = midStrip.RightChild;
+
+            // Split 4: Isolate Center and Right regions
+            centerRight.LeftChild = new BSPLeaf(startX, startY, roomWidth, roomHeight); // CENTRAL ROOM
+            centerRight.RightChild = new BSPLeaf(startX + roomWidth, startY, _map.Width - 1 - (startX + roomWidth), roomHeight);
+
+            // Configure the central leaf so the algorithm treats it as a finished room
+            BSPLeaf centralLeaf = centerRight.LeftChild;
+            centralLeaf.RoomX = centralLeaf.X;
+            centralLeaf.RoomY = centralLeaf.Y;
+            centralLeaf.RoomWidth = centralLeaf.Width;
+            centralLeaf.RoomHeight = centralLeaf.Height;
+            centralLeaf.HasRoom = true; // Protects it from randomization
+
+            // Seed the leaves list for AddChambers to take over
+            _leaves.Add(_rootLeaf.LeftChild);  // Top
+            _leaves.Add(midBottom.RightChild); // Bottom
+            _leaves.Add(midStrip.LeftChild);   // Left
+            _leaves.Add(centerRight.RightChild);// Right
+
+            // (We don't draw the tiles here; CreateRooms will handle it perfectly because HasRoom is true).
+        }
+        else
+        {
+            // CALLED AFTER ADDCHAMBERS: Carve room and force a corridor
+            for (int x = startX; x < startX + roomWidth; x++)
             {
-                if (x > 0 && x < _map.Width - 1 && y > 0 && y < _map.Height - 1)
-                    _map.Tiles[x, y] = new Tile();
+                for (int y = startY; y < startY + roomHeight; y++)
+                {
+                    if (x > 0 && x < _map.Width - 1 && y > 0 && y < _map.Height - 1)
+                        _map.Tiles[x, y] = new Tile();
+                }
+            }
+
+            var targetNode = _rootLeaf.GetRoomCenter();
+            if (targetNode != (0, 0))
+            {
+                int centerX = startX + (roomWidth / 2);
+                int centerY = startY + (roomHeight / 2);
+
+                int minX = Math.Min(centerX, targetNode.X);
+                int maxX = Math.Max(centerX, targetNode.X);
+                for (int x = minX; x <= maxX; x++)
+                    if (x > 0 && x < _map.Width - 1 && centerY > 0 && centerY < _map.Height - 1) _map.Tiles[x, centerY] = new Tile();
+
+                int minY = Math.Min(centerY, targetNode.Y);
+                int maxY = Math.Max(centerY, targetNode.Y);
+                for (int y = minY; y <= maxY; y++)
+                    if (targetNode.X > 0 && targetNode.X < _map.Width - 1 && y > 0 && y < _map.Height - 1) _map.Tiles[targetNode.X, y] = new Tile();
             }
         }
     }
 
     public void AddChambers()
     {
-        _rootLeaf = new BSPLeaf(1, 1, _map.Width - 2, _map.Height - 2);
-        List<BSPLeaf> leaves = new List<BSPLeaf>();
-        leaves.Add(_rootLeaf);
+        if (_rootLeaf == null)
+        {
+            _rootLeaf = new BSPLeaf(1, 1, _map.Width - 2, _map.Height - 2);
+            _leaves.Add(_rootLeaf);
+        }
 
         bool didSplit = true;
 
@@ -181,17 +293,17 @@ public class StandardMapBuilder : IMapBuilder
         {
             didSplit = false;
 
-            List<BSPLeaf> currentLeaves = new List<BSPLeaf>(leaves);
+            List<BSPLeaf> currentLeaves = new List<BSPLeaf>(_leaves);
             foreach (var leaf in currentLeaves)
             {
-                if (leaf.LeftChild == null && leaf.RightChild == null)
+                if (leaf.LeftChild == null && leaf.RightChild == null && !leaf.HasRoom)
                 {
                     if (leaf.Width > BSPLeaf.MAX_LEAF_SIZE || leaf.Height > BSPLeaf.MAX_LEAF_SIZE || _random.NextDouble() > 0.25)
                     {
                         if (leaf.Split(_random))
                         {
-                            leaves.Add(leaf.LeftChild);
-                            leaves.Add(leaf.RightChild);
+                            _leaves.Add(leaf.LeftChild);
+                            _leaves.Add(leaf.RightChild);
                             didSplit = true;
                         }
                     }
@@ -296,11 +408,13 @@ public class StandardMapBuilder : IMapBuilder
             }
             else
             {
-                RoomWidth = random.Next(4, Width - 2);
-                RoomHeight = random.Next(4, Height - 2);
-                RoomX = random.Next(1, Width - RoomWidth - 1) + X;
-                RoomY = random.Next(1, Height - RoomHeight - 1) + Y;
-                HasRoom = true;
+                if (!HasRoom) {
+                    RoomWidth = random.Next(4, Math.Max(Width - 2,4));
+                    RoomHeight = random.Next(4, Math.Max(Height - 2,4));
+                    RoomX = random.Next(1, Math.Max(Width - RoomWidth - 1,1)) + X;
+                    RoomY = random.Next(1, Math.Max(Height - RoomHeight - 1,1)) + Y;
+                    HasRoom = true;
+                }
 
                 for (int x = RoomX; x < RoomX + RoomWidth; x++)
                 {

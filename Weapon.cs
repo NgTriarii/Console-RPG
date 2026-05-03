@@ -107,7 +107,7 @@ public class Zweihander : HeavyWeapon
     }
 }
 
-public class Shield : Weapon
+public class Shield : HeavyWeapon
 {
     public override string Name => "Shield";
 
@@ -137,6 +137,46 @@ public class Shield : Weapon
 
         player.Inventory.Items.Add(toUnequip);
         player.LeftHand = null;
+    }
+}
+
+public class LuckyCoinPouch : HeavyWeapon
+{
+    public override string Name => "Lucky Coin Pouch";
+
+    public override string Description => "A heavy bag filled with coins, you somehow feel like things will now go your way...";
+
+    public override int Damage => 14;
+
+    public override bool IsTwoHanded => true;
+    public override int Equip(Player player, Item context = null)
+    {
+        Item toEquip = context ?? this;
+
+        if (player.RightHand == null && player.LeftHand == null)
+        {
+            player.Damage.Value += Damage;
+            player.Luck.Value += 7;
+
+            player.Inventory.Items.Remove(toEquip);
+            player.RightHand = toEquip;
+            player.LeftHand = toEquip;
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public override void Unequip(Player player, Item context = null)
+    {
+        Item toUnequip = context ?? this;
+
+        player.Damage.Value -= Damage;
+        player.Luck.Value -= 7;
+
+        player.Inventory.Items.Add(toUnequip);
+        player.LeftHand = null;
+        player.RightHand = null;
     }
 }
 

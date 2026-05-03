@@ -57,13 +57,13 @@ public class Renderer
 		}
 
 		Console.SetCursorPosition(mapWidth, currHeight++);
-		Console.Write("----------Inventory----------");
+		Console.Write("-------------Inventory-------------");
 		Console.SetCursorPosition(mapWidth, currHeight++);
-		string rightHand = $"Right Hand: {(player.RightHand != null ? player.RightHand.Name : ' ')}";
-		Console.Write(rightHand.Substring(0, (invWidth > rightHand.Length) ? rightHand.Length : invWidth));
+		string rightHand = $"Right Hand : {(player.RightHand != null ? player.RightHand.Name : ' ')}";
+		Console.Write(rightHand.Substring(0, (invWidth > rightHand.Length) ? rightHand.Length : invWidth) + ((invWidth < rightHand.Length) ? "..." : " ") );
 		Console.SetCursorPosition(mapWidth, currHeight++);
-		string leftHand = $"Left Hand: {(player.LeftHand != null ? player.LeftHand.Name : ' ')}";
-        Console.Write(leftHand.Substring(0, (invWidth > leftHand.Length) ? leftHand.Length : invWidth));
+		string leftHand = $"Left Hand  : {(player.LeftHand != null ? player.LeftHand.Name : ' ')}";
+        Console.Write(leftHand.Substring(0, (invWidth > leftHand.Length) ? leftHand.Length : invWidth) + ((invWidth < leftHand.Length) ? "..." : " "));
 		Console.SetCursorPosition(mapWidth, currHeight++);
 		Console.Write($"Coins: {player.Inventory.Coins} Gold: {player.Inventory.Gold}");
 
@@ -126,9 +126,9 @@ public class Renderer
 	{
 		int startX = mapWidth + 40;
 
-        if (startX >= Console.WindowWidth) return;
+        if (startX >= Console.BufferWidth) return;
 
-		int maxSafeWidth = Console.WindowWidth - startX - 20;
+		int maxSafeWidth = Console.BufferWidth - startX - 20;
 
 		if (maxSafeWidth <= 5) return;
 
@@ -142,6 +142,9 @@ public class Renderer
         }
 
         string blankLine = new string(' ', maxSafeWidth);
+
+        Console.SetCursorPosition(startX, 0);
+        Console.Write("----------Messages----------".PadRight(maxSafeWidth));
 
         int currentY = 1;
 
@@ -164,7 +167,7 @@ public class Renderer
         currentY++;
 
         Console.SetCursorPosition(startX, currentY);
-        Console.Write("Available Controls:".PadRight(maxSafeWidth));
+        Console.Write("----------Controls----------".PadRight(maxSafeWidth));
 		currentY++;
 
         List<string> controls = new List<string>();

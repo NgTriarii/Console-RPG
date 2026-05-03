@@ -15,10 +15,11 @@ public interface IMapBuilder
     void AddPaths();
     void AddChambers();
     void AddCentralRoom(int roomWidth, int roomHeight);
-    void AddLoot(int totalItems);
-    void AddWeapons(int totalWeapons);
-    void AddEnemies(int totalEnemies);
-    void AddModifiedLoot(int totalItems);
+    void AddLoot(int totalItems, IDungeonTheme theme);
+    void AddWeapons(int totalWeapons, IDungeonTheme theme);
+    void AddEnemies(int totalEnemies, IDungeonTheme theme);
+    void AddModifiedWeapons(int totalItems, IDungeonTheme theme);
+    void PlaceSpecificItem(Item item);
 
 
     Map GetResult();
