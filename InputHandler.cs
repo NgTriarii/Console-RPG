@@ -18,7 +18,8 @@ public static class InputFactory
             .SetNext(new SimpleActionHandler(ConsoleKey.R, g => new EquipCommand().Execute(g), "Equip Item"))
             .SetNext(new SimpleActionHandler(ConsoleKey.T, g => new UnequipCommand().Execute(g), "Unequip Item"))
             .SetNext(new SimpleActionHandler(ConsoleKey.G, g => new DropCommand().Execute(g), "Drop Item"))
-            .SetNext(new SimpleActionHandler(ConsoleKey.Escape, g => Environment.Exit(0), "Exit Game"));
+            .SetNext(new SimpleActionHandler(ConsoleKey.Escape, g => Environment.Exit(0), "Exit Game"))
+            .SetNext(new SimpleActionHandler(ConsoleKey.J, g => new ShowLogCommand().Execute(g), "Show Log"));
 
         return root;
     }

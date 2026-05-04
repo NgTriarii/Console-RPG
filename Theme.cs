@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace GameEngine;
 
 public class TreasuryTheme : IDungeonTheme
 {
-    public string IntroMessage => "You feel an itch in your wallet.";
+    public string IntroMessage => "\"You feel an itch in your wallet\": a large central room(treasury) with many corridors, only coins and gold can be found, along with the \"Lucky Coin Pouch\" (a two-handed weapon) and alive, aggressive briefcases and safes.";
 
     private readonly Func<Item>[] _lootTable = { () => new Gold(), () => new Coin() };
     private readonly Func<Enemy>[] _enemyTable = { () => new SafeboxMimic(), () => new BriefcaseBrawler() };

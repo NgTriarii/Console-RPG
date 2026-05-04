@@ -43,6 +43,7 @@ public class MoveCommand : IGameCommand
         else
         {
             game.CurrentMessage = $"You dealt {stats.Damage} damage to {enemy.Name}! (Current Health: {enemy.Health}";
+            LogManager.Instance.Log($"Player dealt {stats.Damage} damage to {enemy.Name}! (Current Health: {enemy.Health}");
         }
 
             int damageToPlayer = Math.Max(0, enemy.Attack - stats.Defense);
@@ -65,7 +66,13 @@ public class MoveCommand : IGameCommand
         {
             ResolveCombat(targetTile, game.GamePlayer, game);
         }
-       
+
+        else if (!targetTile.IsEnterable)
+        {
+            LogManager.Instance.Log("Player attempted to walk into a wall");
+        }
+
+
         else if (targetTile.IsEnterable)
         {
             game.GamePlayer.Move(_dx, _dy, game.GameMap.Width, game.GameMap.Height);
@@ -187,5 +194,13 @@ public class UnequipCommand : IGameCommand
         {
             game.CurrentMessage = "You don't have anything equipped in your hands.";
         }
+    }
+}
+
+public class ShowLogCommand : IGameCommand
+{
+    public void Execute(Game game)
+    {
+        game.isLogShown = !game.isLogShown;
     }
 }

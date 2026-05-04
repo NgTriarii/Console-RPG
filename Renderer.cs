@@ -189,5 +189,17 @@ public class Renderer
             Console.Write(new string(' ', maxSafeWidth));
         }
     }
+
+	public void DrawLog(LogManager logger, int mapwidth, int mapheight, int listlength) {
+
+		Console.SetCursorPosition(mapwidth + 20, mapheight - 1);
+		Console.Write("-----------Log-----------");
+		List<string> messages = logger.GetRecent(listlength);
+		for(int i = 0; i < messages.Count; i++)
+		{
+            Console.SetCursorPosition(mapwidth + 20, mapheight + i);
+            Console.Write(messages[i].PadRight(48).Substring(0, 48));
+		}
+	}
 }
 

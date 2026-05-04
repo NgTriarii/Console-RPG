@@ -66,6 +66,7 @@ public class InputChainBuilder : IInputBuilder
     public void AddSystemInteractions()
     {
         AppendToChain(new SimpleActionHandler(ConsoleKey.Escape, g => Environment.Exit(0), "Exit Game"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.J, g => new ShowLogCommand().Execute(g), "Show Log"));
     }
 
     public InputHandler GetResult() => _head;

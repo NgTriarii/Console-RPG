@@ -18,6 +18,7 @@ public class Game
     public GameConfig Config { get; private set; }
 
     public bool isGameOver { get; set; } = false;
+    public bool isLogShown { get; set; } = false;
 
     public Game()
     {
@@ -113,6 +114,11 @@ public class Game
         while (!GamePlayer.IsDead && !isGameOver)
         {
             GameRenderer.DrawFrame(GameMap, GamePlayer, CursorPos, CurrentMessage, InputChain);
+
+            if (isLogShown)
+            {
+                GameRenderer.DrawLog(LogManager.Instance, GameMap.Width, GameMap.Height, 7);
+            }
 
             ConsoleKey key = Console.ReadKey(true).Key;
 
