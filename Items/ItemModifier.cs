@@ -1,10 +1,12 @@
-﻿using System;
+﻿using GameEngine;
+using OOD_Project.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameEngine;
+namespace OOD_Project.Items;
 
 public abstract class ItemModifier : Item
 {

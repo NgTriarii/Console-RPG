@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GameEngine;
+namespace OOD_Project.Logging;
 
 public class LogManager
 {

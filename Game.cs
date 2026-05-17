@@ -1,4 +1,9 @@
-﻿namespace GameEngine;
+﻿using OOD_Project.Entities;
+using OOD_Project.Inputs;
+using OOD_Project.Logging;
+using OOD_Project.WorldGeneration;
+
+namespace GameEngine;
 
 public class GameConfig
 {

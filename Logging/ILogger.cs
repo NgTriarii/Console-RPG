@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GameEngine;
+namespace OOD_Project.Logging;
 
 public interface ILogger
 {

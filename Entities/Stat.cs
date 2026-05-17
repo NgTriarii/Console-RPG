@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameEngine;
+namespace OOD_Project.Entities;
 public class Stat
 {
     public virtual string Name { get; set; } = "Generic Stat";
@@ -53,5 +53,5 @@ internal class Damage : Stat
 
     private int _value;
 
-    public override int Value { get { return (_value > 0) ? _value : 0; } set {_value = value; } }
+    public override int Value { get { return _value > 0 ? _value : 0; } set {_value = value; } }
 }

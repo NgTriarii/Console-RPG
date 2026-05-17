@@ -1,6 +1,0 @@
-﻿TODO:
--Integrate the InputHandling with MapGeneration in order to make it more scalable and interlocked
--Make modifiers using the decorator pattern
--Make attacks class using the visitor(?) pattern. Attacktypes as visitors enable using weapondamage. Acceptmethod in items, attacks have visitmethods
--Make a combat system using the strategy pattern so that we may use different attacks depending on the weapon class
--Better to implement attacks first

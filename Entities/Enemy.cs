@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameEngine;
+namespace OOD_Project.Entities;
 
 public abstract class Enemy
 {
@@ -53,7 +53,7 @@ public class SafeboxMimic : Enemy
 
     private char _symbol;
 
-    public override char Symbol { get { return (Health == 10) ? 'S' : 'M'; } protected set { _symbol = value; } }
+    public override char Symbol { get { return Health == 10 ? 'S' : 'M'; } protected set { _symbol = value; } }
 }
 
 public class BriefcaseBrawler : Enemy

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using GameEngine;
+using System;
 using System.Collections.Generic;
 
-namespace GameEngine;
+namespace OOD_Project.Inputs;
 
 public static class InputFactory
 {

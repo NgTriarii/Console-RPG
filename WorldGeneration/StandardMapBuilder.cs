@@ -1,8 +1,10 @@
-﻿using System;
+﻿using GameEngine;
+using OOD_Project.Items;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace GameEngine;
+namespace OOD_Project.WorldGeneration;
 
 public class StandardMapBuilder : IMapBuilder
 {
@@ -202,8 +204,8 @@ public class StandardMapBuilder : IMapBuilder
 
     public void AddCentralRoom(int roomWidth, int roomHeight)
     {
-        int startX = (_map.Width / 2) - (roomWidth / 2);
-        int startY = (_map.Height / 2) - (roomHeight / 2);
+        int startX = _map.Width / 2 - roomWidth / 2;
+        int startY = _map.Height / 2 - roomHeight / 2;
 
         if (_rootLeaf == null)
         {
@@ -263,8 +265,8 @@ public class StandardMapBuilder : IMapBuilder
             var targetNode = _rootLeaf.GetRoomCenter();
             if (targetNode != (0, 0))
             {
-                int centerX = startX + (roomWidth / 2);
-                int centerY = startY + (roomHeight / 2);
+                int centerX = startX + roomWidth / 2;
+                int centerY = startY + roomHeight / 2;
 
                 int minX = Math.Min(centerX, targetNode.X);
                 int maxX = Math.Max(centerX, targetNode.X);

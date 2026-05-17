@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using OOD_Project.Logging;
+using System.Collections.Generic;
 
-namespace GameEngine;
+namespace OOD_Project.Logging;
 
 public class MemoryLogger : ILogger
 {
@@ -26,7 +27,7 @@ public class MemoryLogger : ILogger
 
     public List<string> GetRecent(int count)
     {
-        int skipCount = System.Math.Max(0, _logs.Count - count);
+        int skipCount = Math.Max(0, _logs.Count - count);
         return _logs.Skip(skipCount).ToList();
     }
 }
