@@ -1,4 +1,5 @@
-﻿using OOD_Project.Items;
+﻿using OOD_Project.Entities;
+using OOD_Project.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,4 +27,5 @@ public interface IMapBuilder
     Map GetResult();
     bool HasItemsAdded { get; }
     bool HasWeaponsAdded { get; }
+    List<Enemy> SpawnedEnemies { get; }
 }

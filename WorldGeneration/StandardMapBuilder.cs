@@ -1,4 +1,5 @@
 ﻿using GameEngine;
+using OOD_Project.Entities;
 using OOD_Project.Items;
 using System;
 using System.Collections.Generic;
@@ -8,37 +9,13 @@ namespace OOD_Project.WorldGeneration;
 
 public class StandardMapBuilder : IMapBuilder
 {
-    //private readonly Func<Item>[] _itemLootTable = new Func<Item>[]
-    //{
-    //    () => new Gold(),
-    //    () => new Coin(),
-    //    () => new Book(),
-    //    () => new Chalice(),
-    //    () => new Stick(),
-    //    () => new Rapier(),
-    //    () => new Zweihander(),
-    //    () => new Shield()
-    //};
-
-    //private readonly Func<Item>[] _weaponLootTable = new Func<Item>[]
-    //{
-    //    () => new Rapier(),
-    //    () => new Zweihander(),
-    //    () => new Shield()
-    //};
-
-    //private readonly Func<Enemy>[] _enemyTable = new Func<Enemy>[]
-    //{
-    //    () => new Goblin(),
-    //    () => new SafeboxMimic(),
-    //    () => new BriefcaseBrawler()
-    //};
 
     private readonly Func<Item, Item>[] _modifierTable = new Func<Item, Item>[]
     {
         (item) => new StrongModifier(item),
         (item) => new UnluckyModifier(item)
     };
+    public List<Enemy> SpawnedEnemies { get; private set; } = new List<Enemy>();
 
     private Map _map;
     private Random _random = new Random();
@@ -67,6 +44,7 @@ public class StandardMapBuilder : IMapBuilder
 
     public void AddEnemies(int totalEnemies, IDungeonTheme theme)
     {
+
         int placed = 0, attempts = 0;
         while (placed < totalEnemies && attempts < totalEnemies * 100)
         {
@@ -76,7 +54,14 @@ public class StandardMapBuilder : IMapBuilder
 
             if (_map.Tiles[x, y] != null && _map.Tiles[x, y].IsEnterable)
             {
-                _map.Tiles[x, y].EnemyOnTile = theme.GetRandomEnemy(_random);
+                Enemy newEnemy = theme.GetRandomEnemy(_random);
+
+                newEnemy.X = x;
+                newEnemy.Y = y;
+
+                _map.Tiles[x, y].EnemyOnTile = newEnemy;
+
+                SpawnedEnemies.Add(newEnemy);
                 placed++;
             }
         }
@@ -155,18 +140,6 @@ public class StandardMapBuilder : IMapBuilder
             }
         }
     }
-
-    //private Item GetRandomItem(Random random)
-    //{
-    //    int roll = random.Next(_itemLootTable.Length);
-    //    return _itemLootTable[roll].Invoke();
-    //}
-
-    //private Item GetRandomWeapon(Random random)
-    //{
-    //    int roll = random.Next(_weaponLootTable.Length);
-    //    return _weaponLootTable[roll].Invoke();
-    //}
 
     public void StartEmpty(int width, int height)
     {

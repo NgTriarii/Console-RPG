@@ -35,8 +35,6 @@ public abstract class ItemModifier : Item
 
 }
 
-// TODO: Modify player stats on equip instead of changing the calculations. (i. e. implement equip and unequip in every modifier class instead of get*)
-
 public class StrongModifier : ItemModifier
 {
     public StrongModifier(Item innerItem) : base(innerItem) { }

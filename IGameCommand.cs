@@ -80,6 +80,7 @@ public class MoveCommand : IGameCommand
         else if (targetTile.IsEnterable)
         {
             game.GamePlayer.Move(_dx, _dy, game.GameMap.Width, game.GameMap.Height);
+            game.SoundManager.Notify(new SoundEvent(game.GamePlayer.X, game.GamePlayer.Y, 4, game.GamePlayer.Name, game.GameMap));
             targetTile.OnEntry(game.GamePlayer);
         }
     }
@@ -100,9 +101,15 @@ public class DropCommand : IGameCommand
             }
 
             Player player = game.GamePlayer;
+            Item droppedItem = player.Inventory.Items[game.CursorPos];
 
-            game.CurrentMessage = $"Dropped an item: {player.Inventory.Items[game.CursorPos].Name}";
-            game.GameMap.Tiles[player.X, player.Y].ItemOnTile = player.Inventory.Items[game.CursorPos];
+            if (droppedItem.SoundRange > 0)
+            {
+                game.SoundManager.Notify(new SoundEvent(game.GamePlayer.X, game.GamePlayer.Y, droppedItem.SoundRange, droppedItem.Name, game.GameMap));
+            }
+
+            game.CurrentMessage = $"Dropped an item: {droppedItem.Name}";
+            game.GameMap.Tiles[player.X, player.Y].ItemOnTile = droppedItem;
             player.DropItem(game.CursorPos);
 
 
@@ -135,6 +142,12 @@ public class PickUpCommand : IGameCommand
                 game.CurrentMessage = $"Cannot pick up {currentTile.ItemOnTile.Name} - inventory full.";
                 return;
             }
+
+            if (currentTile.ItemOnTile.SoundRange > 0)
+            {
+                game.SoundManager.Notify(new SoundEvent(game.GamePlayer.X, game.GamePlayer.Y, currentTile.ItemOnTile.SoundRange, currentTile.ItemOnTile.Name, game.GameMap));
+            }
+
             // The item determines what happens when picked up (e.g., gold goes to wallet, swords go to inventory)
             currentTile.ItemOnTile.OnPickUp(game.GamePlayer);
             game.CurrentMessage = $"Picked up {currentTile.ItemOnTile.Name}.";

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace OOD_Project.Entities;
 public class Player
 {
-    public string? Name { get; set; }
+    public string? Name { get; set; } = "Player";
     public int X { get; set; } = 1;
     public int Y { get; set; } = 1;
 

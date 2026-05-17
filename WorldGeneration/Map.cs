@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OOD_Project.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,18 +19,21 @@ public class Map
         return Tiles[x, y];
     }
 
-    public bool IsValidMove(int x, int y)
+    public bool IsValidMove(int x, int y, Player player)
     {
-        if (x > Width || x < 0 || y > Height || y < 0)
+        if (x >= Width || x < 0 || y >= Height || y < 0)
         {
             return false;
         }
-        else
+
+        if (player != null && player.X == x && player.Y == y)
         {
-            if (Tiles[x, y].IsEnterable == false) 
-            {
-                return false;
-            }
+            return false;
+        }
+
+        if (Tiles[x, y].IsEnterable == false)
+        {
+            return false;
         }
 
         return true;

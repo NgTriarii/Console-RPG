@@ -20,6 +20,10 @@ public class Game
     public Renderer GameRenderer { get; private set; }
     public InputHandler InputChain { get; private set; }
 
+    public List<Enemy> activeEnemies { get; private set; }
+
+    public SoundManager SoundManager { get; private set; }
+
     public GameConfig Config { get; private set; }
 
     public bool isGameOver { get; set; } = false;
@@ -55,6 +59,27 @@ public class Game
 
         GamePlayer.X = GameMap.Width / 2;
         GamePlayer.Y = GameMap.Height / 2;
+        GamePlayer.Name = Config.PlayerName;
+
+        activeEnemies = mapBuilder.SpawnedEnemies;
+
+        SoundManager = new SoundManager(GameMap);
+
+        var goblinFaction = new Species();
+        var briefcaseFaction = new Species();
+        var safeboxmimicFaction = new Species();
+
+        foreach (var enemy in activeEnemies)
+        {
+            ISubject<DeathEvent> assignedFaction = enemy switch
+            {
+                Goblin => goblinFaction,
+                BriefcaseBrawler => briefcaseFaction,
+                SafeboxMimic => safeboxmimicFaction,
+                _ => new Species()
+            };
+            enemy.RegisterObservers(SoundManager, assignedFaction);
+        }
 
         CurrentMessage = theme.IntroMessage;
     }
@@ -129,15 +154,20 @@ public class Game
 
             bool wasHandled = InputChain.Handle(key, this);
 
-            if (!wasHandled)
+            if (wasHandled)
+            {
+                activeEnemies.RemoveAll(e => e.IsDead);
+
+                foreach (var enemy in activeEnemies)
+                {
+                    enemy.CurrentBehavior.Act(enemy, this);
+                }
+            }
+            else
             {
                 CurrentMessage = $"[{key}] is not a valid action. Check available controls.";
                 LogManager.Instance.Log($"Unknown key pressed: {key}");
             }
-            //else if (!CurrentMessage.Contains("DROP ITEM") && !CurrentMessage.Contains("Equipped") && !CurrentMessage.Contains("Dropped") && !CurrentMessage.Contains("Picked"))
-            //{
-            //    CurrentMessage = "";
-            //}
         }
 
         GameRenderer.DrawGameOver();

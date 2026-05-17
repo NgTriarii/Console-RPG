@@ -36,8 +36,6 @@ public class SoundManager : ISubject<SoundEvent>
 
         foreach (var observer in _observers)
         {
-            //BFS checks if distance <= sound range
-
             observer.OnNotify(eventData);
         }
     }

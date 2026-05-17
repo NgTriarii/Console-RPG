@@ -20,6 +20,8 @@ public class HeavyWeapon : Weapon
 {
     public override bool IsEquippable => true;
 
+    public override int SoundRange => 10;
+
     public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null) =>
         attack.ExecuteWithHeavy(context ?? this, player);
 }
@@ -28,6 +30,8 @@ public class LightWeapon : Weapon
 {
     public override bool IsEquippable => true;
 
+    public override int SoundRange => 2;
+
     public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null) =>
         attack.ExecuteWithLight(context ?? this, player);
 }
@@ -35,6 +39,8 @@ public class LightWeapon : Weapon
 public class MagicalWeapon : Weapon
 {
     public override bool IsEquippable => true;
+
+    public override int SoundRange => 5;
 
     public override CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null) =>
         attack.ExecuteWithMagical(context ?? this, player);
