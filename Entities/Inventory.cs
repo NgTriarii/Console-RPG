@@ -1,4 +1,4 @@
-﻿using OOD_Project.Items;
+using OOD_Project.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +16,5 @@ public class Inventory
 
     public int Coins { get; set; } = 0;
 
-    public List<Item> Items = new List<Item>();
+    public List<Item> Items { get; } = new List<Item>();
 }

@@ -1,4 +1,4 @@
-﻿using OOD_Project.Entities;
+using OOD_Project.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +19,11 @@ public class Map
         return Tiles[x, y];
     }
 
-    public bool IsValidMove(int x, int y, Player player)
+    // Terrain only: bounds + enterability (an enemy makes a tile non-enterable).
+    // Player-vs-player occupancy is checked separately via GameModel.GetPlayerAt.
+    public bool IsValidMove(int x, int y)
     {
         if (x >= Width || x < 0 || y >= Height || y < 0)
-        {
-            return false;
-        }
-
-        if (player != null && player.X == x && player.Y == y)
         {
             return false;
         }

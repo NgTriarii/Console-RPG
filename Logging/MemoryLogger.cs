@@ -1,4 +1,4 @@
-﻿using OOD_Project.Logging;
+using OOD_Project.Logging;
 using System.Collections.Generic;
 
 namespace OOD_Project.Logging;

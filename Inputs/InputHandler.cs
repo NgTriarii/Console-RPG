@@ -1,30 +1,8 @@
-﻿using GameEngine;
+using OOD_Project;
 using System;
 using System.Collections.Generic;
 
 namespace OOD_Project.Inputs;
-
-public static class InputFactory
-{
-    public static InputHandler BuildKeyboardChain()
-    {
-        var root = new MoveHandler();
-
-        root.SetNext(new SimpleActionHandler(ConsoleKey.E, g => new PickUpCommand().Execute(g), "Pick Up Item"))
-            .SetNext(new SimpleActionHandler(ConsoleKey.I, g =>
-            {
-                if (g.GamePlayer.Inventory.Count > 0)
-                    g.CursorPos = (g.CursorPos + 1) % g.GamePlayer.Inventory.Count;
-            }, "Move Inventory Cursor"))
-            .SetNext(new SimpleActionHandler(ConsoleKey.R, g => new EquipCommand().Execute(g), "Equip Item"))
-            .SetNext(new SimpleActionHandler(ConsoleKey.T, g => new UnequipCommand().Execute(g), "Unequip Item"))
-            .SetNext(new SimpleActionHandler(ConsoleKey.G, g => new DropCommand().Execute(g), "Drop Item"))
-            .SetNext(new SimpleActionHandler(ConsoleKey.Escape, g => Environment.Exit(0), "Exit Game"))
-            .SetNext(new SimpleActionHandler(ConsoleKey.J, g => new ShowLogCommand().Execute(g), "Show Log"));
-
-        return root;
-    }
-}
 
 public abstract class InputHandler
 {
@@ -48,10 +26,10 @@ public class MoveHandler : InputHandler
     {
         switch (key)
         {
-            case ConsoleKey.W: case ConsoleKey.UpArrow: new MoveCommand(0, -1).Execute(game); return true;
-            case ConsoleKey.S: case ConsoleKey.DownArrow: new MoveCommand(0, 1).Execute(game); return true;
-            case ConsoleKey.A: case ConsoleKey.LeftArrow: new MoveCommand(-1, 0).Execute(game); return true;
-            case ConsoleKey.D: case ConsoleKey.RightArrow: new MoveCommand(1, 0).Execute(game); return true;
+            case ConsoleKey.W: case ConsoleKey.UpArrow: new MoveCommand(0, -1).Execute(game.Model, game.LocalPlayer); return true;
+            case ConsoleKey.S: case ConsoleKey.DownArrow: new MoveCommand(0, 1).Execute(game.Model, game.LocalPlayer); return true;
+            case ConsoleKey.A: case ConsoleKey.LeftArrow: new MoveCommand(-1, 0).Execute(game.Model, game.LocalPlayer); return true;
+            case ConsoleKey.D: case ConsoleKey.RightArrow: new MoveCommand(1, 0).Execute(game.Model, game.LocalPlayer); return true;
         }
 
         return Next?.Handle(key, game) ?? false;

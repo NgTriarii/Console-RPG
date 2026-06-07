@@ -1,18 +1,15 @@
-﻿using OOD_Project.Entities;
+using OOD_Project.Entities;
 using OOD_Project.Items;
 using OOD_Project.Logging;
 using OOD_Project.WorldGeneration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GameEngine;
+namespace OOD_Project;
 
+// An action that changes the game state for a specific player
 public interface IGameCommand
 {
-    void Execute(Game game);
+    void Execute(GameModel model, Player player);
 }
 
 public class MoveCommand : IGameCommand
@@ -26,7 +23,7 @@ public class MoveCommand : IGameCommand
         _dy = dy;
     }
 
-    public void ResolveCombat(Tile enemyTile, Player player, Game game)
+    public void ResolveCombat(Tile enemyTile, Player player, GameModel model)
     {
         Enemy enemy = enemyTile.EnemyOnTile;
 
@@ -41,34 +38,38 @@ public class MoveCommand : IGameCommand
         if (enemy.IsDead)
         {
             enemyTile.EnemyOnTile = null;
-            game.CurrentMessage = $"You defeated the {enemy.Name}!";
+            player.LastMessage = $"You defeated the {enemy.Name}!";
             return;
         }
         else
         {
-            game.CurrentMessage = $"You dealt {stats.Damage} damage to {enemy.Name}! (Current Health: {enemy.Health}";
+            player.LastMessage = $"You dealt {stats.Damage} damage to {enemy.Name}! (Current Health: {enemy.Health}";
             LogManager.Instance.Log($"Player dealt {stats.Damage} damage to {enemy.Name}! (Current Health: {enemy.Health}");
         }
 
-            int damageToPlayer = Math.Max(0, enemy.Attack - stats.Defense);
+        int damageToPlayer = Math.Max(0, enemy.Attack - stats.Defense);
 
         if (damageToPlayer > 0)
         {
             player.TakeDamage(damageToPlayer);
         }
-
     }
 
-    public void Execute(Game game)
+    public void Execute(GameModel model, Player player)
     {
-        int nextX = game.GamePlayer.X + _dx;
-        int nextY = game.GamePlayer.Y + _dy;
+        int nextX = player.X + _dx;
+        int nextY = player.Y + _dy;
 
-        Tile targetTile = game.GameMap.Tiles[nextX, nextY];
+        Tile targetTile = model.GameMap.Tiles[nextX, nextY];
 
         if (targetTile.EnemyOnTile != null)
         {
-            ResolveCombat(targetTile, game.GamePlayer, game);
+            ResolveCombat(targetTile, player, model);
+        }
+
+        else if (model.GetPlayerAt(nextX, nextY) != null)
+        {
+            LogManager.Instance.Log($"{player.Name} bumped into another player.");
         }
 
         else if (!targetTile.IsEnterable)
@@ -76,148 +77,144 @@ public class MoveCommand : IGameCommand
             LogManager.Instance.Log("Player attempted to walk into a wall");
         }
 
-
-        else if (targetTile.IsEnterable)
+        else
         {
-            game.GamePlayer.Move(_dx, _dy, game.GameMap.Width, game.GameMap.Height);
-            game.SoundManager.Notify(new SoundEvent(game.GamePlayer.X, game.GamePlayer.Y, 4, game.GamePlayer.Name, game.GameMap));
-            targetTile.OnEntry(game.GamePlayer);
+            player.Move(_dx, _dy, model.GameMap.Width, model.GameMap.Height);
+            model.SoundManager.Notify(new SoundEvent(player.X, player.Y, 4, player.Name, model.GameMap));
+            targetTile.OnEntry(player);
         }
     }
 }
 
 public class DropCommand : IGameCommand
 {
-    public void Execute(Game game)
+    private readonly int _slotIndex;
+
+    public DropCommand(int slotIndex)
     {
-        Tile currentTile = game.GameMap.Tiles[game.GamePlayer.X, game.GamePlayer.Y];
+        _slotIndex = slotIndex;
+    }
+
+    public void Execute(GameModel model, Player player)
+    {
+        Tile currentTile = model.GameMap.Tiles[player.X, player.Y];
 
         if (currentTile.ItemOnTile == null)
         {
-            if (game.GamePlayer.Inventory.Count == 0)
+            if (player.Inventory.Count == 0)
             {
-                game.CurrentMessage = "Your inventory is empty!";
+                player.LastMessage = "Your inventory is empty!";
                 return;
             }
 
-            Player player = game.GamePlayer;
-            Item droppedItem = player.Inventory.Items[game.CursorPos];
+            Item droppedItem = player.Inventory.Items[_slotIndex];
 
             if (droppedItem.SoundRange > 0)
             {
-                game.SoundManager.Notify(new SoundEvent(game.GamePlayer.X, game.GamePlayer.Y, droppedItem.SoundRange, droppedItem.Name, game.GameMap));
+                model.SoundManager.Notify(new SoundEvent(player.X, player.Y, droppedItem.SoundRange, droppedItem.Name, model.GameMap));
             }
 
-            game.CurrentMessage = $"Dropped an item: {droppedItem.Name}";
-            game.GameMap.Tiles[player.X, player.Y].ItemOnTile = droppedItem;
-            player.DropItem(game.CursorPos);
-
-
+            player.LastMessage = $"Dropped an item: {droppedItem.Name}";
+            currentTile.ItemOnTile = droppedItem;
+            player.DropItem(_slotIndex);
         }
         else
         {
-            game.CurrentMessage = "There's already an item on the ground here.";
+            player.LastMessage = "There's already an item on the ground here.";
         }
     }
 }
 
 public class ToggleAttackCommand : IGameCommand
 {
-    public void Execute(Game game)
+    public void Execute(GameModel model, Player player)
     {
-        game.GamePlayer.ToggleAttackMode();
-        game.CurrentMessage = $"Attack mode changed to: {game.GamePlayer.CurrentAttack.Name}";
+        player.ToggleAttackMode();
+        player.LastMessage = $"Attack mode changed to: {player.CurrentAttack.Name}";
     }
 }
+
 public class PickUpCommand : IGameCommand
 {
-    public void Execute(Game game)
+    public void Execute(GameModel model, Player player)
     {
-        Tile currentTile = game.GameMap.Tiles[game.GamePlayer.X, game.GamePlayer.Y];
+        Tile currentTile = model.GameMap.Tiles[player.X, player.Y];
 
         if (currentTile.ItemOnTile != null)
         {
-            if(game.GamePlayer.Inventory.Count == game.GamePlayer.Inventory.Limit)
+            if (player.Inventory.Count == player.Inventory.Limit)
             {
-                game.CurrentMessage = $"Cannot pick up {currentTile.ItemOnTile.Name} - inventory full.";
+                player.LastMessage = $"Cannot pick up {currentTile.ItemOnTile.Name} - inventory full.";
                 return;
             }
 
             if (currentTile.ItemOnTile.SoundRange > 0)
             {
-                game.SoundManager.Notify(new SoundEvent(game.GamePlayer.X, game.GamePlayer.Y, currentTile.ItemOnTile.SoundRange, currentTile.ItemOnTile.Name, game.GameMap));
+                model.SoundManager.Notify(new SoundEvent(player.X, player.Y, currentTile.ItemOnTile.SoundRange, currentTile.ItemOnTile.Name, model.GameMap));
             }
 
             // The item determines what happens when picked up (e.g., gold goes to wallet, swords go to inventory)
-            currentTile.ItemOnTile.OnPickUp(game.GamePlayer);
-            game.CurrentMessage = $"Picked up {currentTile.ItemOnTile.Name}.";
+            currentTile.ItemOnTile.OnPickUp(player);
+            player.LastMessage = $"Picked up {currentTile.ItemOnTile.Name}.";
 
             // Remove it from the map
             currentTile.ItemOnTile = null;
         }
         else
         {
-            game.CurrentMessage = "Nothing here to pick up.";
+            player.LastMessage = "Nothing here to pick up.";
         }
     }
 }
 
 public class EquipCommand : IGameCommand
 {
-    public void Execute(Game game)
+    private readonly int _slotIndex;
+
+    public EquipCommand(int slotIndex)
     {
-        if (game.GamePlayer.Inventory.Count == 0)
+        _slotIndex = slotIndex;
+    }
+
+    public void Execute(GameModel model, Player player)
+    {
+        if (player.Inventory.Count == 0)
         {
-            game.CurrentMessage = "Your inventory is empty!";
+            player.LastMessage = "Your inventory is empty!";
             return;
         }
 
-        if (game.CursorPos < game.GamePlayer.Inventory.Count)
+        if (_slotIndex < player.Inventory.Count)
         {
-            Item selectedItem = game.GamePlayer.Inventory.Items[game.CursorPos];
+            Item selectedItem = player.Inventory.Items[_slotIndex];
 
-            int success = 0;
+            int success = selectedItem.Equip(player);
 
-            success = selectedItem.Equip(game.GamePlayer);
-
-            game.CurrentMessage = ((selectedItem.IsEquippable && success == 1) ? $"Equipped {selectedItem.Name}." : $"Couldn't equip {selectedItem.Name}.");
+            player.LastMessage = ((selectedItem.IsEquippable && success == 1) ? $"Equipped {selectedItem.Name}." : $"Couldn't equip {selectedItem.Name}.");
         }
     }
 }
 
 public class UnequipCommand : IGameCommand
 {
-    public void Execute(Game game)
+    public void Execute(GameModel model, Player player)
     {
         bool unequippedAnything = false;
 
-        if (game.GamePlayer.RightHand != null)
+        if (player.RightHand != null)
         {
-            game.GamePlayer.RightHand.Unequip(game.GamePlayer);
+            player.RightHand.Unequip(player);
             unequippedAnything = true;
         }
 
-        if (game.GamePlayer.LeftHand != null)
+        if (player.LeftHand != null)
         {
-            game.GamePlayer.LeftHand.Unequip(game.GamePlayer);
+            player.LeftHand.Unequip(player);
             unequippedAnything = true;
         }
 
-        if (unequippedAnything)
-        {
-            game.CurrentMessage = "Unequipped items.";
-        }
-        else
-        {
-            game.CurrentMessage = "You don't have anything equipped in your hands.";
-        }
-    }
-}
-
-public class ShowLogCommand : IGameCommand
-{
-    public void Execute(Game game)
-    {
-        game.isLogShown = !game.isLogShown;
+        player.LastMessage = unequippedAnything
+            ? "Unequipped items."
+            : "You don't have anything equipped in your hands.";
     }
 }

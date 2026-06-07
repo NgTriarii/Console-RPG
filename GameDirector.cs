@@ -1,4 +1,4 @@
-﻿using OOD_Project.Inputs;
+using OOD_Project.Inputs;
 using OOD_Project.WorldGeneration;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameEngine;
+namespace OOD_Project;
 
 public class GameDirector
 {

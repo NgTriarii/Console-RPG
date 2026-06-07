@@ -1,188 +1,114 @@
-﻿using OOD_Project.Entities;
+using OOD_Project.Entities;
 using OOD_Project.Inputs;
 using OOD_Project.Logging;
 using OOD_Project.WorldGeneration;
 
-namespace GameEngine;
+namespace OOD_Project;
 
-public class GameConfig
-{
-    public string PlayerName { get; set; } = "Hero";
-    public string LogFilePath { get; set; } = "Logs";
-}
+// Handles the main game loop and connects the game state to the screen
 public class Game
 {
-    public string CurrentMessage { get; set; } = "Welcome to the game!";
+    public GameModel Model { get; private set; }
 
-    public int CursorPos { get; set; } = 0;
-    public Map GameMap { get; private set; }
-    public Player GamePlayer { get; private set; }
-    public Renderer GameRenderer { get; private set; }
+    public Player LocalPlayer { get; private set; }
+
     public InputHandler InputChain { get; private set; }
 
-    public List<Enemy> activeEnemies { get; private set; }
+    private readonly IGameView _view;
+    private readonly IInputSource _input;
 
-    public SoundManager SoundManager { get; private set; }
+    // Visual state for the current screen
+    public int CursorPos { get; set; } = 0;
+    public bool IsLogShown { get; set; } = false;
 
-    public GameConfig Config { get; private set; }
-
-    public bool isGameOver { get; set; } = false;
-    public bool isLogShown { get; set; } = false;
-
-    public Game()
+    public Game() : this(new ConsoleView(), new ConsoleInputSource())
     {
-        //Console.SetWindowSize(200, 200);
-
-        Config = LoadOrCreateConfig("config.ini");
-
-        ILogger fileLogger = new FileLogger(Config.PlayerName, Config.LogFilePath);
-        ILogger memoryLogger = new MemoryLogger(100);
-
-
-        LogManager.Instance.Initialize(fileLogger, memoryLogger);
-
-        LogManager.Instance.Log($"Game started by {Config.PlayerName}.");
-
-        GamePlayer = new Player();
-        GameRenderer = new Renderer();
-
-        IMapBuilder mapBuilder = new StandardMapBuilder();
-        IInputBuilder inputBuilder = new InputChainBuilder();
-        GameDirector director = new GameDirector(mapBuilder, inputBuilder);
-        IDungeonTheme theme = new TreasuryTheme();
-
-        director.ConstructThemedDungeon(theme,50, 20);
-        //director.ConstructEmptyRoom(40,20);
-
-        GameMap = mapBuilder.GetResult();
-        InputChain = inputBuilder.GetResult();
-
-        GamePlayer.X = GameMap.Width / 2;
-        GamePlayer.Y = GameMap.Height / 2;
-        GamePlayer.Name = Config.PlayerName;
-
-        activeEnemies = mapBuilder.SpawnedEnemies;
-
-        SoundManager = new SoundManager(GameMap);
-
-        var goblinFaction = new Species();
-        var briefcaseFaction = new Species();
-        var safeboxmimicFaction = new Species();
-
-        foreach (var enemy in activeEnemies)
-        {
-            ISubject<DeathEvent> assignedFaction = enemy switch
-            {
-                Goblin => goblinFaction,
-                BriefcaseBrawler => briefcaseFaction,
-                SafeboxMimic => safeboxmimicFaction,
-                _ => new Species()
-            };
-            enemy.RegisterObservers(SoundManager, assignedFaction);
-        }
-
-        CurrentMessage = theme.IntroMessage;
     }
 
-    private GameConfig LoadOrCreateConfig(string filePath)
+    // Sets up a new single-player game
+    public Game(IGameView view, IInputSource input)
     {
-        var config = new GameConfig();
+        _view = view;
+        _input = input;
 
-        if (!File.Exists(filePath))
+        GameConfig config = GameInitializer.LoadOrCreateConfig("config.ini");
+        GameInitializer.InitLogging(config);
+
+        var (model, inputChain) = GameInitializer.Build(config);
+        Model = model;
+        InputChain = inputChain;
+
+        var (spawnX, spawnY) = Model.FindSpawnPoint();
+        LocalPlayer = new Player
         {
-            string[] defaultLines =
-            {
-                "[Settings]",
-                $"PlayerName={config.PlayerName}",
-                $"LogFilePath={config.LogFilePath}"
-            };
-            File.WriteAllLines(filePath, defaultLines);
-            return config;
-        }
+            Name = config.PlayerName,
+            X = spawnX,
+            Y = spawnY,
+            LastMessage = Model.CurrentMessage
+        };
+        Model.AddPlayer(LocalPlayer);
+    }
 
-        string[] lines = File.ReadAllLines(filePath);
-        foreach (string line in lines)
+    // Sets up the game for an existing server
+    public Game(GameModel model, Player localPlayer, InputHandler inputChain, IGameView view, IInputSource input)
+    {
+        _view = view;
+        _input = input;
+        Model = model;
+        LocalPlayer = localPlayer;
+        InputChain = inputChain;
+    }
+
+    // Allows the server to update the screen manually
+    public void InitView() => _view.Initialize();
+    public void RenderFrame() => _view.Render(Model, LocalPlayer, CursorPos, IsLogShown, InputChain);
+    public ConsoleKey ReadKey() => _input.ReadKey();
+    public void ShowGameOver() => _view.ShowGameOver();
+
+    // Change what is shown on screen without affecting the game state
+    public void ToggleLog() => IsLogShown = !IsLogShown;
+
+    public void MoveCursor()
+    {
+        int count = LocalPlayer.Inventory.Count;
+        if (count > 0)
         {
-            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("[")) continue;
-
-            string[] parts = line.Split('=', 2);
-            if (parts.Length == 2)
-            {
-                string key = parts[0].Trim();
-                string value = parts[1].Trim();
-
-                if (key.Equals("PlayerName", StringComparison.OrdinalIgnoreCase))
-                {
-                    config.PlayerName = value;
-                }
-                else if (key.Equals("LogFilePath", StringComparison.OrdinalIgnoreCase))
-                {
-                    config.LogFilePath = value;
-                }
-            }
+            CursorPos = (CursorPos + 1) % count;
         }
-
-        return config;
     }
 
     public void Run()
     {
-        
-        int requiredWidth = 140;
-        int requiredHeight = 90;
+        _view.Initialize();
 
-        if (Console.BufferWidth < requiredWidth) Console.BufferWidth = requiredWidth;
-        if (Console.WindowWidth < requiredWidth) Console.WindowWidth = requiredWidth;
-
-        if (Console.BufferHeight < requiredHeight) Console.BufferHeight = requiredHeight;
-        if (Console.WindowHeight < requiredHeight) Console.WindowHeight = requiredHeight;
-        
-
-        Console.CursorVisible = false;
-        Console.Clear();
-
-        while (!GamePlayer.IsDead && !isGameOver)
+        while (!LocalPlayer.IsDead && !Model.IsGameOver)
         {
-            GameRenderer.DrawFrame(GameMap, GamePlayer, CursorPos, CurrentMessage, InputChain);
+            _view.Render(Model, LocalPlayer, CursorPos, IsLogShown, InputChain);
 
-            if (isLogShown)
-            {
-                GameRenderer.DrawLog(LogManager.Instance, GameMap.Width, GameMap.Height, 7);
-            }
-
-            ConsoleKey key = Console.ReadKey(true).Key;
+            ConsoleKey key = _input.ReadKey();
 
             bool wasHandled = InputChain.Handle(key, this);
 
             if (wasHandled)
             {
-                activeEnemies.RemoveAll(e => e.IsDead);
-
-                foreach (var enemy in activeEnemies)
-                {
-                    enemy.CurrentBehavior.Act(enemy, this);
-                }
+                Model.AdvanceEnemyTurn();
             }
             else
             {
-                CurrentMessage = $"[{key}] is not a valid action. Check available controls.";
+                LocalPlayer.LastMessage = $"[{key}] is not a valid action. Check available controls.";
                 LogManager.Instance.Log($"Unknown key pressed: {key}");
             }
         }
 
-        GameRenderer.DrawGameOver();
+        _view.ShowGameOver();
 
         LogManager.Instance.Log("Player died. Game Over.");
 
-        ConsoleKey currKey = Console.ReadKey(true).Key;
+        ConsoleKey currKey = _input.ReadKey();
 
         while (currKey != ConsoleKey.Enter)
         {
-            currKey = Console.ReadKey(true).Key;
+            currKey = _input.ReadKey();
         }
-
     }
 }
-
-
-

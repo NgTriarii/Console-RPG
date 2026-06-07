@@ -1,4 +1,4 @@
-﻿using GameEngine;
+using OOD_Project;
 using OOD_Project.Items;
 using System;
 using System.Collections.Generic;
@@ -7,11 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace OOD_Project.Entities;
-public class Player
+
+public class Player : OOD_Project.IObserver<SoundEvent>
 {
+    public int Id { get; set; }
     public string? Name { get; set; } = "Player";
     public int X { get; set; } = 1;
     public int Y { get; set; } = 1;
+
+    // Player specific message
+    public string LastMessage { get; set; } = "Welcome to the game!";
 
     public Inventory Inventory { get; set; } = new Inventory();
 
@@ -21,7 +26,7 @@ public class Player
 
     // Stats
     public Stat Health { get; private set; } = new Health();
-    public Stat Damage { get ; set; } = new Damage();
+    public Stat Damage { get; set; } = new Damage();
     public Stat Aggression { get; private set; } = new Aggression();
     public Stat Wisdom { get; private set; } = new Wisdom();
     public Stat Luck { get; private set; } = new Luck();
@@ -69,5 +74,27 @@ public class Player
     public void ToggleAttackMode()
     {
         _currentAttackIndex = (_currentAttackIndex + 1) % _availableAttacks.Length;
+    }
+
+    public void OnNotify(SoundEvent eventData)
+    {
+        if (eventData.OriginX == X && eventData.OriginY == Y) return;
+
+        if (eventData.TryGetHearingDistance(X, Y, out _))
+        {
+            LastMessage = $"You hear {eventData.SourceName} to the {DirectionTo(eventData.OriginX, eventData.OriginY)}.";
+        }
+    }
+
+    private string DirectionTo(int originX, int originY)
+    {
+        int dx = originX - X;
+        int dy = originY - Y;
+
+        if (Math.Abs(dx) >= Math.Abs(dy))
+        {
+            return dx >= 0 ? "east" : "west";
+        }
+        return dy >= 0 ? "south" : "north";
     }
 }

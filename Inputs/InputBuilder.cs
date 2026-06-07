@@ -1,4 +1,4 @@
-﻿using GameEngine;
+using OOD_Project;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,26 +48,22 @@ public class InputChainBuilder : IInputBuilder
 
     public void AddItemInteractions()
     {
-        AppendToChain(new SimpleActionHandler(ConsoleKey.E, g => new PickUpCommand().Execute(g), "Pick Up Item"));
-        AppendToChain(new SimpleActionHandler(ConsoleKey.G, g => new DropCommand().Execute(g), "Drop Item"));
-        AppendToChain(new SimpleActionHandler(ConsoleKey.I, g =>
-        {
-            if (g.GamePlayer.Inventory.Count > 0)
-                g.CursorPos = (g.CursorPos + 1) % g.GamePlayer.Inventory.Count;
-        }, "Move Cursor"));
-        AppendToChain(new SimpleActionHandler(ConsoleKey.U, g => new ToggleAttackCommand().Execute(g), "Change Attack Type"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.E, g => new PickUpCommand().Execute(g.Model, g.LocalPlayer), "Pick Up Item"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.G, g => new DropCommand(g.CursorPos).Execute(g.Model, g.LocalPlayer), "Drop Item"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.I, g => g.MoveCursor(), "Move Cursor"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.U, g => new ToggleAttackCommand().Execute(g.Model, g.LocalPlayer), "Change Attack Type"));
     }
 
     public void AddEquipmentInteractions()
     {
-        AppendToChain(new SimpleActionHandler(ConsoleKey.R, g => new EquipCommand().Execute(g), "Equip Item"));
-        AppendToChain(new SimpleActionHandler(ConsoleKey.T, g => new UnequipCommand().Execute(g), "Unequip Item"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.R, g => new EquipCommand(g.CursorPos).Execute(g.Model, g.LocalPlayer), "Equip Item"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.T, g => new UnequipCommand().Execute(g.Model, g.LocalPlayer), "Unequip Item"));
     }
 
     public void AddSystemInteractions()
     {
         AppendToChain(new SimpleActionHandler(ConsoleKey.Escape, g => Environment.Exit(0), "Exit Game"));
-        AppendToChain(new SimpleActionHandler(ConsoleKey.J, g => new ShowLogCommand().Execute(g), "Show Log"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.J, g => g.ToggleLog(), "Show Log"));
     }
 
     public InputHandler GetResult() => _head;

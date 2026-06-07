@@ -1,11 +1,11 @@
-﻿using GameEngine;
+using OOD_Project;
 using OOD_Project.Logging;
 using OOD_Project.WorldGeneration;
 using System;
 
 namespace OOD_Project.Entities;
 
-public abstract class Enemy : GameEngine.IObserver<SoundEvent>, GameEngine.IObserver<DeathEvent>
+public abstract class Enemy : OOD_Project.IObserver<SoundEvent>, OOD_Project.IObserver<DeathEvent>
 {
     public string Name { get; protected set; }
     public int Health { get; protected set; }
@@ -47,7 +47,7 @@ public abstract class Enemy : GameEngine.IObserver<SoundEvent>, GameEngine.IObse
         }
     }
 
-    protected virtual void PerformAttack(Player player, GameEngine.Game game)
+    protected virtual void PerformAttack(Player player)
     {
         int defense = player.Dexterity.Value;
         int damageDealt = Math.Max(0, Attack - defense);
@@ -55,24 +55,25 @@ public abstract class Enemy : GameEngine.IObserver<SoundEvent>, GameEngine.IObse
         player.TakeDamage(damageDealt);
 
         string msg = $"{Name} attacks you for {damageDealt} damage! (HP: {player.Health.Value})";
-        game.CurrentMessage = msg;
+        player.LastMessage = msg;
         OOD_Project.Logging.LogManager.Instance.Log(msg);
     }
 
-    public bool MoveTo(int nextX, int nextY, Game game)
+    public bool MoveTo(int nextX, int nextY, GameModel model)
     {
-        if (nextX == game.GamePlayer.X && nextY == game.GamePlayer.Y)
+        Player? targetPlayer = model.GetPlayerAt(nextX, nextY);
+        if (targetPlayer != null)
         {
-            PerformAttack(game.GamePlayer, game);
+            PerformAttack(targetPlayer);
             return true;
         }
 
-        if (game.GameMap.IsValidMove(nextX, nextY, game.GamePlayer))
+        if (model.GameMap.IsValidMove(nextX, nextY))
         {
-            game.GameMap.Tiles[X, Y].EnemyOnTile = null;
+            model.GameMap.Tiles[X, Y].EnemyOnTile = null;
             X = nextX;
             Y = nextY;
-            game.GameMap.Tiles[X, Y].EnemyOnTile = this;
+            model.GameMap.Tiles[X, Y].EnemyOnTile = this;
             return true;
         }
         return false;

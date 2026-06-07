@@ -1,9 +1,9 @@
-﻿using OOD_Project.Logging;
+using OOD_Project.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace GameEngine;
+namespace OOD_Project.Logging;
 
 public class FileLogger : ILogger
 {

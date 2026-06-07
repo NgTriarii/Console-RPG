@@ -36,6 +36,8 @@ public class Wall : Tile
 
     public override bool IsEnterable => false;
 
+    public override bool IsWall => true;
+
 }
 
 public class HorizBorder : Tile
@@ -44,6 +46,8 @@ public class HorizBorder : Tile
     public override char Symbol => '-';
 
     public override bool IsEnterable => false;
+
+    public override bool IsBorder => true;
 }
 
 public class VertBorder : Tile
@@ -52,4 +56,6 @@ public class VertBorder : Tile
     public override char Symbol => '|';
 
     public override bool IsEnterable => false;
+
+    public override bool IsBorder => true;
 }

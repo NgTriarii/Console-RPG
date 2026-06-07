@@ -1,4 +1,4 @@
-﻿using GameEngine;
+using OOD_Project;
 using OOD_Project.Entities;
 using OOD_Project.Items;
 using System;
@@ -27,6 +27,7 @@ public class StandardMapBuilder : IMapBuilder
 
     public void AddLoot(int totalItems, IDungeonTheme theme)
     {
+        HasItemsAdded = true;
         int placed = 0, attempts = 0;
         while (placed < totalItems && attempts < totalItems * 100)
         {
@@ -410,7 +411,7 @@ public class StandardMapBuilder : IMapBuilder
             (int X, int Y) rightCenter = RightChild != null ? RightChild.GetRoomCenter() : (0, 0);
 
             if (leftCenter != (0, 0) && rightCenter != (0, 0))
-                return new Random().Next(2) == 0 ? leftCenter : rightCenter;
+                return Random.Shared.Next(2) == 0 ? leftCenter : rightCenter;
             else if (leftCenter != (0, 0))
                 return leftCenter;
             else
