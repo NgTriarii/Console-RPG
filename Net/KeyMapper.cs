@@ -26,9 +26,15 @@ public static class KeyMapper
             case ConsoleKey.RightArrow:
                 return ActionType.MoveRight;
             case ConsoleKey.E:
-                return ActionType.Equip;
-            case ConsoleKey.Q:
+                return ActionType.PickUp;
+            case ConsoleKey.G:
                 return ActionType.Drop;
+            case ConsoleKey.R:
+                return ActionType.Equip;
+            case ConsoleKey.T:
+                return ActionType.Unequip;
+            case ConsoleKey.U:
+                return ActionType.ToggleAttack;
             default:
                 return null;
         }
