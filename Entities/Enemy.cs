@@ -2,12 +2,14 @@ using OOD_Project;
 using OOD_Project.Logging;
 using OOD_Project.WorldGeneration;
 using System;
+using System.Collections.Generic;
 
 namespace OOD_Project.Entities;
 
 public abstract class Enemy : OOD_Project.IObserver<SoundEvent>, OOD_Project.IObserver<DeathEvent>
 {
     public string Name { get; protected set; }
+    public int MaxHealth { get; protected set; }
     public int Health { get; protected set; }
     public int Attack { get; protected set; }
     public int Armor { get; protected set; }
@@ -17,7 +19,7 @@ public abstract class Enemy : OOD_Project.IObserver<SoundEvent>, OOD_Project.IOb
 
     public int X { get; set; }
     public int Y { get; set; }
-    public IEnemyBehavior CurrentBehavior { get; set; } = new WanderBehavior();
+    public IEnemyBehaviour CurrentBehaviour { get; set; } = new WanderBehaviour();
 
     protected ISubject<SoundEvent> _soundSubject;
     protected ISubject<DeathEvent> _speciesSubject;
@@ -25,13 +27,46 @@ public abstract class Enemy : OOD_Project.IObserver<SoundEvent>, OOD_Project.IOb
     public Enemy(string name, int health, int attack, int armor, char symbol)
     {
         Name = name;
+        MaxHealth = health;
         Health = health;
         Attack = attack;
         Armor = armor;
         Symbol = symbol;
     }
 
-    protected virtual void ReactToSound(int soundX, int soundY) { }
+    protected virtual void ReactToSound(int soundX, int soundY)
+    {
+        CurrentBehaviour?.OnHearSound(this, soundX, soundY);
+    }
+
+    public List<Player> GetPlayersInLineOfSight(GameModel model)
+    {
+        var players = new List<Player>();
+        int[] dx = { 0, 0, -1, 1 };
+        int[] dy = { -1, 1, 0, 0 };
+
+        for (int dir = 0; dir < 4; dir++)
+        {
+            for (int dist = 1; dist < Math.Max(model.GameMap.Width, model.GameMap.Height); dist++)
+            {
+                int checkX = X + dx[dir] * dist;
+                int checkY = Y + dy[dir] * dist;
+
+                if (checkX < 0 || checkX >= model.GameMap.Width || checkY < 0 || checkY >= model.GameMap.Height) break;
+
+                Tile tile = model.GameMap.Tiles[checkX, checkY];
+                if (tile.IsWall || tile.IsBorder) break;
+
+                Player? p = model.GetPlayerAt(checkX, checkY);
+                if (p != null)
+                {
+                    players.Add(p);
+                    break;
+                }
+            }
+        }
+        return players;
+    }
 
     public virtual void TakeDamage(int incomingDamage)
     {
@@ -110,11 +145,7 @@ public class Goblin : Enemy
         armor: 1,
         symbol: 'g')
     {
-    }
-
-    protected override void ReactToSound(int soundX, int soundY)
-    {
-        CurrentBehavior = new FleeBehavior(soundX, soundY);
+        CurrentBehaviour = new BehaviourChain(new FleePlayerBehaviour(), new FleeSoundBehaviour(), new WanderBehaviour());
     }
 
     public override void OnNotify(DeathEvent eventData)
@@ -134,16 +165,25 @@ public class SafeboxMimic : Enemy
         armor: 0,
         symbol: 'S')
     {
-        CurrentBehavior = new StationaryBehaviour();
+        CurrentBehaviour = new StationaryBehaviour();
     }
 
     private char _symbol;
 
-    public override char Symbol { get { return Health == 10 ? 'S' : 'M'; } protected set { _symbol = value; } }
+    public override char Symbol { get { return Health == MaxHealth ? 'S' : 'M'; } protected set { _symbol = value; } }
 
-    protected override void ReactToSound(int soundX, int soundY)
+    public override void TakeDamage(int incomingDamage)
     {
-        CurrentBehavior = (Symbol == 'S') ? new StationaryBehaviour() : new ChaseBehavior(soundX, soundY);
+        base.TakeDamage(incomingDamage);
+
+        if (Health >= MaxHealth / 2)
+        {
+            CurrentBehaviour = new BehaviourChain(new ChasePlayerBehaviour(), new ChaseSoundBehaviour(), new WanderBehaviour());
+        }
+        else
+        {
+            CurrentBehaviour = new BehaviourChain(new FleePlayerBehaviour(), new FleeSoundBehaviour(), new WanderBehaviour());
+        }
     }
 
     public override void OnNotify(DeathEvent eventData)
@@ -151,7 +191,15 @@ public class SafeboxMimic : Enemy
         Attack += 1;
         Health -= 1;
         LogManager.Instance.Log($"The mimic heard about the discovery of its mate! Its form returns to normal!");
-        CurrentBehavior = new WanderBehavior();
+
+        if (Health >= MaxHealth / 2)
+        {
+            CurrentBehaviour = new BehaviourChain(new ChasePlayerBehaviour(), new ChaseSoundBehaviour(), new WanderBehaviour());
+        }
+        else
+        {
+            CurrentBehaviour = new BehaviourChain(new FleePlayerBehaviour(), new FleeSoundBehaviour(), new WanderBehaviour());
+        }
     }
 }
 
@@ -164,11 +212,7 @@ public class BriefcaseBrawler : Enemy
         armor: 3,
         symbol: 'B')
     {
-    }
-
-    protected override void ReactToSound(int soundX, int soundY)
-    {
-        CurrentBehavior = new ChaseBehavior(soundX, soundY);
+        CurrentBehaviour = new BehaviourChain(new ChasePlayerBehaviour(), new ChaseSoundBehaviour(), new WanderBehaviour());
     }
 
     public override void OnNotify(DeathEvent eventData)

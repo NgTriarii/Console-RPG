@@ -40,6 +40,16 @@ public class ConsoleView : IGameView
         {
             DrawLog(LogManager.Instance, model.GameMap.Width, model.GameMap.Height, 7);
         }
+        else
+        {
+            Console.SetCursorPosition(model.GameMap.Width + 20, model.GameMap.Height - 1);
+            Console.Write(new string(' ', 48));
+            for (int i = 0; i < 7; i++)
+            {
+                Console.SetCursorPosition(model.GameMap.Width + 20, model.GameMap.Height + i);
+                Console.Write(new string(' ', 48));
+            }
+        }
     }
 
     public void ShowGameOver()
@@ -219,7 +229,7 @@ public class ConsoleView : IGameView
             currentY++;
         }
 
-        for (int i = currentY; i <= 15; i++)
+        for (int i = currentY; i <= 40; i++)
         {
             Console.SetCursorPosition(startX, i);
             Console.Write(new string(' ', maxSafeWidth));
@@ -231,10 +241,17 @@ public class ConsoleView : IGameView
         Console.SetCursorPosition(mapwidth + 20, mapheight - 1);
         Console.Write("-----------Log-----------");
         List<string> messages = logger.GetRecent(listlength);
-        for (int i = 0; i < messages.Count; i++)
+        for (int i = 0; i < listlength; i++)
         {
             Console.SetCursorPosition(mapwidth + 20, mapheight + i);
-            Console.Write(messages[i].PadRight(48).Substring(0, 48));
+            if (i < messages.Count)
+            {
+                Console.Write(messages[i].PadRight(48).Substring(0, 48));
+            }
+            else
+            {
+                Console.Write(new string(' ', 48));
+            }
         }
     }
 }

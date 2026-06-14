@@ -16,6 +16,7 @@ public class Item
     public virtual int SoundRange { get; } = 0;
 
     public virtual bool IsEquippable => false;
+    public virtual bool IsSlottable => false;
 
     public virtual CombatStats AcceptAttack(IAttackAction attack, Player player, Item context = null)
     {

@@ -21,6 +21,7 @@ public interface IMapBuilder
     void AddWeapons(int totalWeapons, IDungeonTheme theme);
     void AddEnemies(int totalEnemies, IDungeonTheme theme);
     void AddModifiedWeapons(int totalItems, IDungeonTheme theme);
+    void AddSlotItems();
     void PlaceSpecificItem(Item item);
 
 

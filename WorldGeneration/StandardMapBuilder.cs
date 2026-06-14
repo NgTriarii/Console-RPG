@@ -124,6 +124,39 @@ public class StandardMapBuilder : IMapBuilder
         }
     }
 
+    public void AddSlotItems()
+    {
+        HasItemsAdded = true;
+        HasWeaponsAdded = true;
+
+        List<Item> itemsToAdd = new List<Item>
+        {
+            new SlottedSword(2),
+            new Holder(2),
+            new Holder(2),
+            new GemOfStrength(),
+            new GemOfLuck(),
+            new GemOfWisdom()
+        };
+
+        foreach (var item in itemsToAdd)
+        {
+            int attempts = 0;
+            while (attempts < 1000)
+            {
+                int x = _random.Next(1, _map.Width - 1);
+                int y = _random.Next(1, _map.Height - 1);
+
+                if (_map.Tiles[x, y] != null && _map.Tiles[x, y].IsEnterable && _map.Tiles[x, y].ItemOnTile == null)
+                {
+                    _map.Tiles[x, y].ItemOnTile = item;
+                    break;
+                }
+                attempts++;
+            }
+        }
+    }
+
     public void PlaceSpecificItem(Item item)
     {
         int attempts = 0;

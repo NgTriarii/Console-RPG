@@ -58,11 +58,13 @@ public class InputChainBuilder : IInputBuilder
     {
         AppendToChain(new SimpleActionHandler(ConsoleKey.R, g => new EquipCommand(g.CursorPos).Execute(g.Model, g.LocalPlayer), "Equip Item"));
         AppendToChain(new SimpleActionHandler(ConsoleKey.T, g => new UnequipCommand().Execute(g.Model, g.LocalPlayer), "Unequip Item"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.C, g => new InsertItemCommand(g.CursorPos).Execute(g.Model, g.LocalPlayer), "Insert Into Equipped"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.X, g => new ExtractItemCommand().Execute(g.Model, g.LocalPlayer), "Extract From Equipped"));
     }
 
     public void AddSystemInteractions()
     {
-        AppendToChain(new SimpleActionHandler(ConsoleKey.Escape, g => Environment.Exit(0), "Exit Game"));
+        AppendToChain(new SimpleActionHandler(ConsoleKey.Escape, g => new ExitCommand().Execute(g.Model, g.LocalPlayer), "Exit Game"));
         AppendToChain(new SimpleActionHandler(ConsoleKey.J, g => g.ToggleLog(), "Show Log"));
     }
 

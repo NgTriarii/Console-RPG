@@ -102,7 +102,7 @@ public class GameModel
 
         foreach (var enemy in ActiveEnemies)
         {
-            enemy.CurrentBehavior.Act(enemy, this);
+            enemy.CurrentBehaviour.Act(enemy, this);
         }
     }
 }

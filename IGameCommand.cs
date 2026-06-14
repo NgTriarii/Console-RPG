@@ -218,3 +218,73 @@ public class UnequipCommand : IGameCommand
             : "You don't have anything equipped in your hands.";
     }
 }
+
+public class InsertItemCommand : IGameCommand
+{
+    private readonly int _slotIndex;
+
+    public InsertItemCommand(int slotIndex)
+    {
+        _slotIndex = slotIndex;
+    }
+
+    public void Execute(GameModel model, Player player)
+    {
+        if (_slotIndex >= player.Inventory.Count) return;
+
+        Item itemToInsert = player.Inventory.Items[_slotIndex];
+
+        if (player.RightHand is IItemContainer container)
+        {
+            if (container.TryAdd(itemToInsert))
+            {
+                player.Inventory.Items.RemoveAt(_slotIndex);
+                itemToInsert.Equip(player, player.RightHand); 
+                player.LastMessage = $"Inserted {itemToInsert.Name} into {player.RightHand.Name}.";
+            }
+            else
+            {
+                player.LastMessage = $"{player.RightHand.Name} has no empty slots!";
+            }
+        }
+        else
+        {
+            player.LastMessage = "You must equip a weapon or holder with slots first.";
+        }
+    }
+}
+
+public class ExtractItemCommand : IGameCommand
+{
+    public void Execute(GameModel model, Player player)
+    {
+        if (player.RightHand is IItemContainer container)
+        {
+            Item extractedItem = container.ExtractLast();
+            if (extractedItem != null)
+            {
+                extractedItem.Unequip(player, player.RightHand);
+                player.Inventory.Items.Add(extractedItem);
+                player.LastMessage = $"Extracted {extractedItem.Name} from {player.RightHand.Name}.";
+            }
+            else
+            {
+                player.LastMessage = $"{player.RightHand.Name} is empty.";
+            }
+        }
+        else
+        {
+            player.LastMessage = "You must equip a weapon or holder with slots first.";
+        }
+    }
+}
+
+public class ExitCommand : IGameCommand
+{
+    public void Execute(GameModel model, Player player)
+    {
+        Console.Clear();
+        Console.WriteLine("GAME EXITED");
+        Environment.Exit(Environment.ExitCode);
+    }
+}

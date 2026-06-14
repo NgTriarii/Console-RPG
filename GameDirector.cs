@@ -26,6 +26,7 @@ public class GameDirector
         _mapBuilder.AddLoot(12, theme);
         _mapBuilder.AddEnemies(4, theme);
         _mapBuilder.AddModifiedWeapons(5, theme);
+        _mapBuilder.AddSlotItems();
 
         _mapBuilder.PlaceSpecificItem(theme.GetArtifact());
 
